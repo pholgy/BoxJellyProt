@@ -248,10 +248,28 @@ class DockingResult:
 
 def calculate_binding_affinity(protein: Protein, drug: DrugCandidate, pocket: BindingPocket) -> float:
     """คำนวณค่า Binding Affinity (การจำลอง)"""
-    mw_factor = -math.log(drug.molecular_weight / 100 + 1) * 2
-    pocket_factor = pocket.druggability_score * -3
-    compatibility = random.uniform(-2, 0)
 
+    # สร้าง seed เฉพาะสำหรับแต่ละคู่โปรตีน-สารยา เพื่อให้ค่าแตกต่างกัน
+    pair_seed = hash(f"{protein.uniprot_id}_{drug.name}") % 10000
+    random.seed(pair_seed)
+
+    # 1. ปัจจัยจากน้ำหนักโมเลกุล
+    mw_factor = -math.log(drug.molecular_weight / 100 + 1) * 2
+
+    # 2. ปัจจัยจาก Binding Pocket
+    pocket_factor = pocket.druggability_score * -3
+
+    # 3. ปัจจัยเฉพาะโปรตีน (แต่ละโปรตีนมีค่าต่างกัน)
+    protein_hash = sum(ord(c) for c in protein.uniprot_id) / 100
+    protein_factor = random.uniform(-1.5, 0.5) + (protein_hash % 1) - 0.5
+
+    # 4. ปัจจัยความยาวโปรตีน (โปรตีนยาวกว่ามักจับยากกว่า)
+    length_factor = -0.5 if protein.length < 300 else (0.3 if protein.length > 500 else 0)
+
+    # 5. ความเข้ากันระหว่างโปรตีนและสาร
+    compatibility = random.uniform(-1.5, 0.5)
+
+    # 6. Known boost สำหรับสารที่มีงานวิจัยรองรับ
     known_boost = 0
     if drug.name == "Silymarin":
         known_boost = -2.5
@@ -266,8 +284,27 @@ def calculate_binding_affinity(protein: Protein, drug: DrugCandidate, pocket: Bi
     elif "Marimastat" in drug.name or "Batimastat" in drug.name:
         known_boost = -1.8
 
-    binding_affinity = mw_factor + pocket_factor + compatibility + known_boost
+    # 7. โบนัสพิเศษสำหรับคู่ที่เหมาะสม
+    special_match = 0
+    # EDTA ดีกับ Metalloproteinase
+    if drug.name == "EDTA" and "Metalloproteinase" in protein.name:
+        special_match = -1.5
+    # MMP Inhibitors ดีกับ Metalloproteinase
+    if drug.category == "MMP Inhibitor" and "Metalloproteinase" in protein.name:
+        special_match = -1.2
+    # Flavonoids ดีกับ Cytotoxin
+    if drug.category == "Flavonoid" and "Cytotoxin" in protein.name:
+        special_match = -0.8
+    # Phospholipase inhibitors
+    if drug.name in ["Quercetin", "Myricetin"] and "Phospholipase" in protein.name:
+        special_match = -1.0
+
+    # คำนวณค่ารวม
+    binding_affinity = mw_factor + pocket_factor + protein_factor + length_factor + compatibility + known_boost + special_match
     binding_affinity = max(-12.0, min(-1.0, binding_affinity))
+
+    # Reset random seed
+    random.seed()
 
     return round(binding_affinity, 2)
 
