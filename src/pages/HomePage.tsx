@@ -80,7 +80,7 @@ export const HomePage: React.FC = () => {
     <div className="homepage">
       {/* Main Header */}
       <div className="header-section">
-        <Title level={1} className="main-header">
+        <Title level={1} className="main-header main-header-glow">
           🪼 โปรแกรมวิเคราะห์โครงสร้างโปรตีนในพิษแมงกะพรุนกล่อง
         </Title>
         <Paragraph className="sub-header">

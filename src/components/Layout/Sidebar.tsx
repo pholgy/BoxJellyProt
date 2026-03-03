@@ -26,9 +26,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onNavigate }) => 
   const [stats, setStats] = useState<DatabaseStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Find current page index for keyboard navigation
-  const currentPageIndex = navigationItems.findIndex(item => item === currentPage);
-
   useEffect(() => {
     const loadStats = async () => {
       try {
@@ -36,7 +33,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onNavigate }) => 
         setStats(databaseStats);
       } catch (error) {
         console.error('Error loading database stats:', error);
-        // Fallback stats if service fails
         setStats({ total_proteins: 12, total_drugs: 25 });
       } finally {
         setIsLoading(false);
@@ -48,35 +44,41 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onNavigate }) => 
 
   return (
     <aside
-      className="w-72 h-screen bg-white border-r border-gray-200 flex flex-col shadow-sm"
+      className="w-72 min-h-[100dvh] bio-sidebar flex flex-col"
       role="navigation"
       aria-label="เมนูหลักการนำทาง"
     >
       {/* Header with Jellyfish Icon */}
-      <div className="p-6 text-center border-b border-gray-200">
+      <div className="p-6 text-center border-b border-white/[0.06]">
         <div className="mb-4 flex justify-center">
-          <JellyfishIcon
-            className="w-20 h-20"
-            alt="Box Jellyfish - แมงกะพรุนกล่อง"
-          />
+          <div className="relative">
+            <JellyfishIcon
+              className="w-20 h-20 drop-shadow-[0_0_12px_rgba(0,212,255,0.3)]"
+              alt="Box Jellyfish - แมงกะพรุนกล่อง"
+            />
+            <div className="absolute inset-0 rounded-full bg-accent/5 blur-xl" />
+          </div>
         </div>
-        <h1 className="text-xl font-bold text-gray-900 mb-2">เมนูหลัก</h1>
-        <p className="text-sm text-gray-600">เลือกหน้า</p>
+        <h1 className="text-xl font-bold text-zinc-100 mb-1 tracking-tight">
+          เมนูหลัก
+        </h1>
+        <p className="text-sm text-zinc-500">เลือกหน้า</p>
       </div>
 
       {/* Navigation Menu */}
-      <nav className="flex-1 px-4 py-6" aria-label="เมนูหน้าต่างๆ">
-        <div className="space-y-2" role="list">
+      <nav className="flex-1 px-3 py-5" aria-label="เมนูหน้าต่างๆ">
+        <div className="space-y-1" role="list">
           {navigationItems.map((item, index) => (
             <button
               key={item}
               onClick={() => onNavigate(item)}
               className={`
-                w-full text-left px-4 py-3 rounded-md transition-all duration-200
-                flex items-center space-x-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+                w-full text-left px-4 py-3 text-sm font-medium
+                focus:outline-none focus:ring-2 focus:ring-accent/40 focus:ring-offset-2 focus:ring-offset-bio-800
+                bio-nav-item
                 ${currentPage === item
-                  ? 'bg-blue-100 text-blue-600 border border-blue-200 shadow-sm'
-                  : 'text-gray-700 hover:bg-gray-50 hover:translate-x-0.5'
+                  ? 'active text-accent'
+                  : 'text-zinc-400 hover:text-zinc-200'
                 }
               `}
               role="listitem"
@@ -114,36 +116,50 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onNavigate }) => 
         </div>
 
         {/* Divider */}
-        <hr className="my-6 border-gray-200" />
+        <hr className="my-5 border-white/[0.06]" />
 
-        {/* Database Stats - Streamlit style metrics */}
+        {/* Database Stats */}
         <DatabaseErrorBoundary>
-          <div className="space-y-4" role="region" aria-label="สถิติฐานข้อมูล">
+          <div className="space-y-3 px-1" role="region" aria-label="สถิติฐานข้อมูล">
             <div className="metric-card" role="status" aria-live="polite">
-              <div className="text-2xl font-bold text-blue-600 mb-1" aria-label={`จำนวนโปรตีน ${isLoading ? 'กำลังโหลด' : stats?.total_proteins || 0} โปรตีน`}>
-                {isLoading ? '...' : stats?.total_proteins || 0}
+              <div
+                className="text-2xl font-bold text-accent mb-1 font-mono"
+                aria-label={`จำนวนโปรตีน ${isLoading ? 'กำลังโหลด' : stats?.total_proteins || 0} โปรตีน`}
+              >
+                {isLoading ? (
+                  <div className="bio-skeleton h-8 w-12" />
+                ) : (
+                  stats?.total_proteins || 0
+                )}
               </div>
-              <div className="text-sm font-medium text-gray-700">จำนวนโปรตีน</div>
+              <div className="text-sm font-medium text-zinc-400">จำนวนโปรตีน</div>
             </div>
 
             <div className="metric-card" role="status" aria-live="polite">
-              <div className="text-2xl font-bold text-blue-600 mb-1" aria-label={`จำนวนสารยา ${isLoading ? 'กำลังโหลด' : stats?.total_drugs || 0} สารยา`}>
-                {isLoading ? '...' : stats?.total_drugs || 0}
+              <div
+                className="text-2xl font-bold text-teal mb-1 font-mono"
+                aria-label={`จำนวนสารยา ${isLoading ? 'กำลังโหลด' : stats?.total_drugs || 0} สารยา`}
+              >
+                {isLoading ? (
+                  <div className="bio-skeleton h-8 w-12" />
+                ) : (
+                  stats?.total_drugs || 0
+                )}
               </div>
-              <div className="text-sm font-medium text-gray-700">จำนวนสารยา</div>
+              <div className="text-sm font-medium text-zinc-400">จำนวนสารยา</div>
             </div>
           </div>
         </DatabaseErrorBoundary>
 
         {/* Divider */}
-        <hr className="my-6 border-gray-200" />
+        <hr className="my-5 border-white/[0.06]" />
       </nav>
 
       {/* Footer */}
-      <div className="px-6 py-4 border-t border-gray-200 bg-gray-50">
-        <div className="text-xs text-gray-500 text-center space-y-1">
+      <div className="px-6 py-4 border-t border-white/[0.06]">
+        <div className="text-xs text-zinc-600 text-center space-y-1">
           <p>โปรแกรมวิเคราะห์โปรตีนพิษแมงกะพรุนกล่อง v1.0</p>
-          <p>© 2025 - เพื่อการศึกษาและวิจัย</p>
+          <p>&copy; 2025 - เพื่อการศึกษาและวิจัย</p>
         </div>
       </div>
     </aside>

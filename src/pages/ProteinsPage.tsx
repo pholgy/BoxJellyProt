@@ -122,25 +122,25 @@ export const ProteinsPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto px-4 py-8">
+      <div className="max-w-[1400px] mx-auto px-4 py-8 p-6">
         <div className="text-center">
-          <p className="text-lg">กำลังโหลดข้อมูล...</p>
+          <p className="text-lg text-zinc-300">กำลังโหลดข้อมูล...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="max-w-[1400px] mx-auto px-4 py-8 p-6">
       {/* Header - exact Thai text from Streamlit */}
-      <h1 className="text-3xl font-bold mb-8 text-center">🧬 ฐานข้อมูลโปรตีนพิษแมงกะพรุน</h1>
+      <h1 className="text-3xl font-bold mb-8 text-center text-zinc-100">🧬 ฐานข้อมูลโปรตีนพิษแมงกะพรุน</h1>
 
       {/* Filters - exact layout from Streamlit col1, col2 */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
         <div className="space-y-2">
-          <Label htmlFor="organism-filter">กรองตามสิ่งมีชีวิต</Label>
+          <Label htmlFor="organism-filter" className="text-zinc-300">กรองตามสิ่งมีชีวิต</Label>
           <Select value={organismFilter} onValueChange={setOrganismFilter}>
-            <SelectTrigger id="organism-filter">
+            <SelectTrigger id="organism-filter" className="border-white/[0.08]">
               <SelectValue placeholder="เลือกสิ่งมีชีวิต" />
             </SelectTrigger>
             <SelectContent>
@@ -155,9 +155,9 @@ export const ProteinsPage: React.FC = () => {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="toxin-filter">กรองตามชนิดพิษ</Label>
+          <Label htmlFor="toxin-filter" className="text-zinc-300">กรองตามชนิดพิษ</Label>
           <Select value={toxinFilter} onValueChange={setToxinFilter}>
-            <SelectTrigger id="toxin-filter">
+            <SelectTrigger id="toxin-filter" className="border-white/[0.08]">
               <SelectValue placeholder="เลือกชนิดพิษ" />
             </SelectTrigger>
             <SelectContent>
@@ -174,7 +174,7 @@ export const ProteinsPage: React.FC = () => {
 
       {/* Result count info - exact Thai text from Streamlit */}
       <div className="mb-6">
-        <Badge variant="secondary" className="text-lg px-4 py-2">
+        <Badge variant="secondary" className="text-lg px-4 py-2 bg-accent/10 text-accent">
           พบ {filteredProteins.length} โปรตีน
         </Badge>
       </div>
@@ -186,21 +186,21 @@ export const ProteinsPage: React.FC = () => {
           const isSequenceVisible = sequenceVisible.has(protein.uniprot_id);
 
           return (
-            <Card key={protein.uniprot_id} className="w-full">
+            <Card key={protein.uniprot_id} className="w-full glass-panel border-white/[0.06]">
               <Collapsible
                 open={isExpanded}
                 onOpenChange={() => toggleProteinExpansion(protein.uniprot_id)}
               >
                 <CollapsibleTrigger asChild>
-                  <CardHeader className="cursor-pointer hover:bg-gray-50">
-                    <CardTitle className="flex justify-between items-center">
+                  <CardHeader className="cursor-pointer hover:bg-white/[0.04]">
+                    <CardTitle className="flex justify-between items-center text-zinc-100">
                       <span>
                         <strong>{protein.name}</strong> - {protein.organism}
                       </span>
                       {isExpanded ? (
-                        <ChevronUpIcon className="h-5 w-5" />
+                        <ChevronUpIcon className="h-5 w-5 text-zinc-400" />
                       ) : (
-                        <ChevronDownIcon className="h-5 w-5" />
+                        <ChevronDownIcon className="h-5 w-5 text-zinc-400" />
                       )}
                     </CardTitle>
                   </CardHeader>
@@ -211,13 +211,13 @@ export const ProteinsPage: React.FC = () => {
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                       {/* Left column - protein details (exact Streamlit col1 structure) */}
                       <div className="lg:col-span-2 space-y-4">
-                        <div className="space-y-2">
-                          <p><strong>รหัส UniProt:</strong> {protein.uniprot_id}</p>
-                          <p><strong>สิ่งมีชีวิต:</strong> {protein.organism}</p>
-                          <p><strong>ชนิดพิษ:</strong> {protein.toxin_type}</p>
-                          <p><strong>หน้าที่:</strong> {protein.function}</p>
-                          <p><strong>ความยาว:</strong> {protein.length} กรดอะมิโน</p>
-                          <p><strong>น้ำหนักโมเลกุล:</strong> {protein.molecular_weight.toLocaleString()} Da</p>
+                        <div className="space-y-2 text-zinc-300">
+                          <p><strong className="text-zinc-100">รหัส UniProt:</strong> {protein.uniprot_id}</p>
+                          <p><strong className="text-zinc-100">สิ่งมีชีวิต:</strong> {protein.organism}</p>
+                          <p><strong className="text-zinc-100">ชนิดพิษ:</strong> {protein.toxin_type}</p>
+                          <p><strong className="text-zinc-100">หน้าที่:</strong> {protein.function}</p>
+                          <p><strong className="text-zinc-100">ความยาว:</strong> {protein.length} กรดอะมิโน</p>
+                          <p><strong className="text-zinc-100">น้ำหนักโมเลกุล:</strong> {protein.molecular_weight.toLocaleString()} Da</p>
                         </div>
 
                         {/* Sequence toggle - exact Streamlit checkbox logic */}
@@ -228,14 +228,14 @@ export const ProteinsPage: React.FC = () => {
                               checked={isSequenceVisible}
                               onCheckedChange={() => toggleSequenceVisibility(protein.uniprot_id)}
                             />
-                            <Label htmlFor={`seq-${protein.uniprot_id}`}>
+                            <Label htmlFor={`seq-${protein.uniprot_id}`} className="text-zinc-300">
                               แสดงลำดับกรดอะมิโน
                             </Label>
                           </div>
 
                           {isSequenceVisible && (
-                            <div className="bg-gray-100 p-4 rounded-md">
-                              <code className="text-sm font-mono break-all">
+                            <div className="bg-bio-800 p-4 rounded-md border border-white/[0.06]">
+                              <code className="text-sm font-mono break-all text-zinc-300">
                                 {protein.sequence.length > 100
                                   ? protein.sequence.substring(0, 100) + "..."
                                   : protein.sequence
@@ -249,12 +249,13 @@ export const ProteinsPage: React.FC = () => {
                       {/* Right column - 3D visualization (exact Streamlit col2 structure) */}
                       <div className="space-y-4">
                         <div>
-                          <h4 className="font-bold mb-3">โครงสร้าง 3 มิติ (จำลอง Alpha Helix):</h4>
-                          <div className="border rounded-lg overflow-hidden">
+                          <h4 className="font-bold mb-3 text-zinc-100">โครงสร้าง 3 มิติ (จำลอง Alpha Helix):</h4>
+                          <div className="relative border border-accent/20 rounded-xl overflow-hidden">
                             <AlphaHelixVisualization
                               proteinId={protein.uniprot_id}
                               sequence={protein.sequence}
                             />
+                            <div className="holographic-overlay" />
                           </div>
                         </div>
                       </div>
@@ -270,7 +271,7 @@ export const ProteinsPage: React.FC = () => {
       {/* Empty state */}
       {filteredProteins.length === 0 && (
         <div className="text-center py-8">
-          <p className="text-gray-500 text-lg">ไม่พบโปรตีนที่ตรงกับเงื่อนไขการกรอง</p>
+          <p className="text-zinc-500 text-lg">ไม่พบโปรตีนที่ตรงกับเงื่อนไขการกรอง</p>
         </div>
       )}
     </div>

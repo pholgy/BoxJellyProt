@@ -17,7 +17,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   const [page, setPage] = useState(currentPage);
 
   useEffect(() => {
-    // Initialize database connection when layout mounts
     const initDatabase = async () => {
       try {
         await DatabaseService.getDatabaseStats();
@@ -39,14 +38,14 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   return (
     <ErrorBoundary>
       <div
-        className="flex h-screen bg-gray-50"
+        className="flex min-h-[100dvh]"
         data-testid="app-layout"
       >
-        {/* Sidebar */}
+        {/* Sidebar Navigation Panel */}
         <ErrorBoundary
           fallback={
-            <div className="w-72 h-screen bg-white border-r border-gray-200 flex items-center justify-center">
-              <div className="text-center text-gray-500">
+            <div className="w-72 min-h-[100dvh] bio-sidebar flex items-center justify-center">
+              <div className="text-center text-zinc-400">
                 <p>เมนูไม่สามารถโหลดได้</p>
               </div>
             </div>
@@ -59,9 +58,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
         </ErrorBoundary>
 
         {/* Main Content Area */}
-        <main className="flex-1 overflow-auto">
+        <main className="flex-1 overflow-auto bio-scrollbar">
           <ErrorBoundary>
-            <div className="h-full">
+            <div className="min-h-full">
               {children}
             </div>
           </ErrorBoundary>

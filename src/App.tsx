@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { ConfigProvider } from 'antd';
+import { ConfigProvider, theme as antdTheme } from 'antd';
+import { AnimatePresence, motion } from 'framer-motion';
 import { AppLayout } from './components/Layout';
 import { HomePage } from './pages/HomePage';
 import { ProteinsPage } from './pages/ProteinsPage';
@@ -7,12 +8,21 @@ import { DrugsPage } from './pages/DrugsPage';
 import { SimulationPage } from './pages/SimulationPage';
 import { ResultsPage } from './pages/ResultsPage';
 import { ExportPage } from './pages/ExportPage';
+import { antdBioTheme } from './theme';
 import './index.css';
+
+const pageComponents: Record<string, React.FC> = {
+  home: HomePage,
+  proteins: ProteinsPage,
+  drugs: DrugsPage,
+  simulation: SimulationPage,
+  results: ResultsPage,
+  export: ExportPage,
+};
 
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState('🏠 หน้าแรก');
 
-  // Map Thai navigation items to internal route keys
   const getRouteFromPage = (page: string): string => {
     switch (page) {
       case '🏠 หน้าแรก':
@@ -32,26 +42,8 @@ const App: React.FC = () => {
     }
   };
 
-  const renderPage = () => {
-    const route = getRouteFromPage(currentPage);
-
-    switch (route) {
-      case 'home':
-        return <HomePage />;
-      case 'proteins':
-        return <ProteinsPage />;
-      case 'drugs':
-        return <DrugsPage />;
-      case 'simulation':
-        return <SimulationPage />;
-      case 'results':
-        return <ResultsPage />;
-      case 'export':
-        return <ExportPage />;
-      default:
-        return <HomePage />;
-    }
-  };
+  const route = getRouteFromPage(currentPage);
+  const PageComponent = pageComponents[route] || HomePage;
 
   const handlePageChange = (page: string) => {
     setCurrentPage(page);
@@ -60,14 +52,25 @@ const App: React.FC = () => {
   return (
     <ConfigProvider
       theme={{
-        token: {
-          colorPrimary: '#1E88E5',
-        },
+        ...antdBioTheme,
+        algorithm: antdTheme.darkAlgorithm,
       }}
     >
-      <AppLayout currentPage={currentPage} onPageChange={handlePageChange}>
-        {renderPage()}
-      </AppLayout>
+      <div data-testid="app-loaded" className="bio-background">
+        <AppLayout currentPage={currentPage} onPageChange={handlePageChange}>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={route}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <PageComponent />
+            </motion.div>
+          </AnimatePresence>
+        </AppLayout>
+      </div>
     </ConfigProvider>
   );
 };

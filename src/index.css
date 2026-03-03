@@ -4,65 +4,448 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  font-family: 'Noto Sans Thai', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+/* ============================================
+   BIOLUMINESCENT MARINE RESEARCH STATION THEME
+   ============================================ */
+
+@layer base {
+  :root {
+    --bio-navy-900: #0a0f14;
+    --bio-navy-800: #0F1419;
+    --bio-navy-700: #1A2332;
+    --bio-navy-600: #243044;
+    --bio-accent: #00D4FF;
+    --bio-accent-glow: rgba(0, 212, 255, 0.3);
+    --bio-accent-subtle: rgba(0, 212, 255, 0.1);
+    --bio-accent-border: rgba(0, 212, 255, 0.2);
+    --bio-teal: #4ECDC4;
+    --bio-teal-subtle: rgba(78, 205, 196, 0.1);
+    --bio-glass-bg: rgba(15, 20, 25, 0.8);
+    --bio-glass-border: rgba(255, 255, 255, 0.1);
+    --bio-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  body {
+    font-family: 'Noto Sans Thai', 'Geist', system-ui, -apple-system, sans-serif;
+    background-color: var(--bio-navy-800);
+    color: #f4f4f5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
 }
 
-.main-header {
-  font-size: 2.5rem;
-  color: #1E88E5;
-  text-align: center;
-  margin-bottom: 1rem;
+@layer components {
+  /* === Bioluminescent Background === */
+  .bio-background {
+    position: relative;
+    background:
+      radial-gradient(ellipse at 20% 50%, rgba(0, 212, 255, 0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 20%, rgba(78, 205, 196, 0.06) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 80%, rgba(0, 212, 255, 0.04) 0%, transparent 40%),
+      linear-gradient(135deg, #0F1419 0%, #1A2332 50%, #0F1419 100%);
+    min-height: 100dvh;
+  }
+
+  /* === Glassmorphism Panel === */
+  .glass-panel {
+    background: var(--bio-glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--bio-glass-border);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    border-radius: 1rem;
+  }
+
+  @supports not (backdrop-filter: blur(1px)) {
+    .glass-panel {
+      background: rgba(15, 20, 25, 0.95);
+    }
+  }
+
+  .glass-panel-light {
+    background: rgba(26, 35, 50, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid var(--bio-glass-border);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    border-radius: 0.75rem;
+  }
+
+  /* === Bioluminescent Headers === */
+  .main-header {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #f4f4f5;
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+  }
+
+  .main-header-glow {
+    text-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
+  }
+
+  .sub-header {
+    font-size: 1.1rem;
+    color: #a1a1aa;
+    line-height: 1.6;
+    max-width: 65ch;
+  }
+
+  /* === Bioluminescent Buttons === */
+  .bio-button {
+    border-radius: 0.75rem;
+    transition: all 0.3s var(--bio-ease);
+    border: 1px solid var(--bio-accent-border);
+    background: rgba(0, 212, 255, 0.1);
+    color: var(--bio-accent);
+    font-weight: 500;
+    padding: 0.5rem 1.25rem;
+  }
+
+  .bio-button:hover {
+    background: rgba(0, 212, 255, 0.18);
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
+    transform: translateY(-1px);
+  }
+
+  .bio-button:active {
+    transform: scale(0.98);
+    box-shadow: none;
+  }
+
+  .bio-button-primary {
+    background: var(--bio-accent);
+    color: #0F1419;
+    border-color: transparent;
+    font-weight: 600;
+  }
+
+  .bio-button-primary:hover {
+    background: #33ddff;
+    box-shadow: 0 0 25px rgba(0, 212, 255, 0.35);
+  }
+
+  /* === Sidebar / Navigation Panel === */
+  .bio-sidebar {
+    background: var(--bio-glass-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-right: 1px solid var(--bio-glass-border);
+    box-shadow:
+      inset -1px 0 0 rgba(255, 255, 255, 0.05),
+      4px 0 24px rgba(0, 0, 0, 0.3);
+  }
+
+  .bio-nav-item {
+    transition: all 0.3s var(--bio-ease);
+    border-radius: 0.5rem;
+    border: 1px solid transparent;
+  }
+
+  .bio-nav-item:hover {
+    background: rgba(0, 212, 255, 0.06);
+    border-color: rgba(0, 212, 255, 0.1);
+    transform: translateX(2px);
+  }
+
+  .bio-nav-item.active {
+    background: rgba(0, 212, 255, 0.12);
+    border-color: var(--bio-accent-border);
+    color: var(--bio-accent);
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.1);
+  }
+
+  /* === Metric Cards === */
+  .metric-card {
+    background: rgba(26, 35, 50, 0.5);
+    border: 1px solid var(--bio-glass-border);
+    border-radius: 0.75rem;
+    padding: 1rem 1.25rem;
+    transition: all 0.3s var(--bio-ease);
+  }
+
+  .metric-card:hover {
+    border-color: var(--bio-accent-border);
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.08);
+  }
+
+  /* === Feature Cards === */
+  .bio-card {
+    background: var(--bio-glass-bg);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid var(--bio-glass-border);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    border-radius: 1rem;
+    transition: all 0.4s var(--bio-ease);
+  }
+
+  .bio-card:hover {
+    border-color: var(--bio-accent-border);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.08),
+      0 0 20px rgba(0, 212, 255, 0.08);
+    transform: translateY(-2px);
+  }
+
+  /* === Rating Colors (Scientific Results) === */
+  .result-excellent { color: #4ECDC4; font-weight: bold; }
+  .result-good { color: #00D4FF; font-weight: bold; }
+  .result-moderate { color: #f59e0b; }
+  .result-weak { color: #f97316; }
+  .result-very-weak { color: #ef4444; }
+
+  /* === Skeleton Loading === */
+  .bio-skeleton {
+    background: linear-gradient(
+      90deg,
+      rgba(26, 35, 50, 0.5) 25%,
+      rgba(0, 212, 255, 0.08) 50%,
+      rgba(26, 35, 50, 0.5) 75%
+    );
+    background-size: 400% 100%;
+    animation: shimmer 2s linear infinite;
+    border-radius: 0.5rem;
+  }
+
+  /* === Scrollbar Styling === */
+  .bio-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  .bio-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .bio-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(0, 212, 255, 0.2);
+    border-radius: 3px;
+  }
+  .bio-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 212, 255, 0.35);
+  }
+
+  /* === 3D Viewer Holographic Overlay === */
+  .holographic-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    background:
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 212, 255, 0.03) 2px,
+        rgba(0, 212, 255, 0.03) 4px
+      );
+    z-index: 1;
+  }
+
+  /* === Dividers === */
+  .bio-divider {
+    border-color: rgba(255, 255, 255, 0.08);
+  }
 }
 
-.sub-header {
-  font-size: 1.2rem;
-  color: #666;
-  text-align: center;
-  margin-bottom: 2rem;
+/* === Ant Design Dark Theme Overrides === */
+.ant-card {
+  background: var(--bio-glass-bg) !important;
+  border-color: var(--bio-glass-border) !important;
+  border-radius: 1rem !important;
 }
 
-/* Streamlit-style metrics */
-.metric-card {
-  background-color: #f0f2f6;
-  border-radius: 10px;
-  padding: 1rem;
-  text-align: center;
+.ant-card-head {
+  border-bottom-color: rgba(255, 255, 255, 0.06) !important;
+  color: #f4f4f5 !important;
 }
 
-/* Result rating colors matching Streamlit */
-.result-excellent {
-  color: #2E7D32;
-  font-weight: bold;
+.ant-card-head-title {
+  color: #f4f4f5 !important;
 }
 
-.result-good {
-  color: #1976D2;
-  font-weight: bold;
+.ant-card-body {
+  color: #a1a1aa !important;
 }
 
-.result-moderate {
-  color: #F57C00;
+.ant-table-wrapper {
+  border-radius: 1rem;
+  overflow: hidden;
 }
 
-.result-weak {
-  color: #D32F2F;
+.ant-table {
+  background: transparent !important;
 }
 
-/* Sidebar styling for better match with Streamlit */
-.sidebar-nav-item {
-  transition: all 0.2s ease-in-out;
-  border-radius: 0.375rem;
+.ant-table-thead > tr > th {
+  background: rgba(0, 212, 255, 0.08) !important;
+  color: #f4f4f5 !important;
+  border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+  font-weight: 600;
 }
 
-.sidebar-nav-item:hover {
-  background-color: rgb(249 250 251);
-  transform: translateX(2px);
+.ant-table-tbody > tr > td {
+  border-bottom-color: rgba(255, 255, 255, 0.04) !important;
+  color: #a1a1aa !important;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.sidebar-nav-item.active {
-  background-color: rgb(219 234 254); /* bg-blue-100 */
-  color: rgb(37 99 235); /* text-blue-600 */
-  border: 1px solid rgb(191 219 254);
-  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+.ant-table-tbody > tr:hover > td {
+  background: rgba(0, 212, 255, 0.04) !important;
+}
+
+.ant-select-selector {
+  background: var(--bio-navy-700) !important;
+  border-color: var(--bio-glass-border) !important;
+  color: #f4f4f5 !important;
+}
+
+.ant-select-dropdown {
+  background: var(--bio-navy-600) !important;
+  border: 1px solid var(--bio-glass-border) !important;
+}
+
+.ant-select-item {
+  color: #a1a1aa !important;
+}
+
+.ant-select-item-option-selected {
+  background: rgba(0, 212, 255, 0.12) !important;
+  color: var(--bio-accent) !important;
+}
+
+.ant-select-item-option-active {
+  background: rgba(0, 212, 255, 0.06) !important;
+}
+
+.ant-alert {
+  background: rgba(0, 212, 255, 0.06) !important;
+  border-color: var(--bio-accent-border) !important;
+  border-radius: 0.75rem !important;
+}
+
+.ant-alert-message {
+  color: #f4f4f5 !important;
+}
+
+.ant-alert-description {
+  color: #a1a1aa !important;
+}
+
+.ant-tabs-tab {
+  color: #71717a !important;
+}
+
+.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: var(--bio-accent) !important;
+}
+
+.ant-tabs-ink-bar {
+  background: var(--bio-accent) !important;
+}
+
+.ant-statistic-title {
+  color: #71717a !important;
+}
+
+.ant-statistic-content {
+  color: #f4f4f5 !important;
+}
+
+.ant-input {
+  background: var(--bio-navy-700) !important;
+  border-color: var(--bio-glass-border) !important;
+  color: #f4f4f5 !important;
+}
+
+.ant-input:focus, .ant-input-focused {
+  border-color: var(--bio-accent) !important;
+  box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.15) !important;
+}
+
+.ant-checkbox-checked .ant-checkbox-inner {
+  background-color: var(--bio-accent) !important;
+  border-color: var(--bio-accent) !important;
+}
+
+.ant-slider-track {
+  background: var(--bio-accent) !important;
+}
+
+.ant-slider-handle::after {
+  box-shadow: 0 0 0 2px var(--bio-accent) !important;
+}
+
+.ant-progress-bg {
+  background: linear-gradient(90deg, var(--bio-accent), var(--bio-teal)) !important;
+}
+
+.ant-divider {
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.ant-btn-primary {
+  background: var(--bio-accent) !important;
+  border-color: var(--bio-accent) !important;
+  color: #0F1419 !important;
+  font-weight: 600;
+  border-radius: 0.75rem !important;
+  box-shadow: none !important;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.ant-btn-primary:hover {
+  background: #33ddff !important;
+  border-color: #33ddff !important;
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.25) !important;
+  transform: translateY(-1px);
+}
+
+.ant-btn-primary:active {
+  transform: scale(0.98) !important;
+}
+
+.ant-btn-default {
+  background: rgba(0, 212, 255, 0.08) !important;
+  border-color: var(--bio-accent-border) !important;
+  color: var(--bio-accent) !important;
+  border-radius: 0.75rem !important;
+}
+
+.ant-typography {
+  color: #f4f4f5 !important;
+}
+
+.ant-typography.ant-typography-secondary {
+  color: #a1a1aa !important;
+}
+
+/* === Recharts Bioluminescent Overrides === */
+.recharts-cartesian-grid line {
+  stroke: rgba(255, 255, 255, 0.06);
+}
+
+.recharts-text {
+  fill: #a1a1aa;
+}
+
+.recharts-tooltip-wrapper .recharts-default-tooltip {
+  background: var(--bio-navy-700) !important;
+  border: 1px solid var(--bio-accent-border) !important;
+  border-radius: 0.5rem !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
+}
+
+.recharts-tooltip-label {
+  color: #f4f4f5 !important;
+}
+
+.recharts-tooltip-item {
+  color: #a1a1aa !important;
 }
