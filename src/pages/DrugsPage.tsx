@@ -49,7 +49,7 @@ const MolecularVisualization: React.FC<{ smiles: string; drugName: string }> = (
   }, [smiles]);
 
   return (
-    <Canvas style={{ height: '330px', width: '100%' }}>
+    <Canvas style={{ height: '330px', width: '100%', background: '#0a0f14' }}>
       <ambientLight intensity={0.5} />
       <pointLight position={[10, 10, 10]} />
 
@@ -131,23 +131,23 @@ export const DrugsPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto px-4 py-8">
+      <div className="max-w-[1400px] mx-auto p-6">
         <div className="text-center">
-          <p className="text-lg">กำลังโหลดข้อมูล...</p>
+          <p className="text-lg text-zinc-300">กำลังโหลดข้อมูล...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="max-w-[1400px] mx-auto p-6">
       {/* Header - exact Thai text from Streamlit */}
-      <h1 className="text-3xl font-bold mb-8 text-center">💊 ฐานข้อมูลสารยาที่มีศักยภาพ</h1>
+      <h1 className="text-3xl font-bold mb-8 text-center text-zinc-100">💊 ฐานข้อมูลสารยาที่มีศักยภาพ</h1>
 
       {/* Filters - exact layout from Streamlit col1, col2 */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
         <div className="space-y-2">
-          <Label htmlFor="category-filter">กรองตามประเภท</Label>
+          <Label htmlFor="category-filter" className="text-zinc-300">กรองตามประเภท</Label>
           <Select value={categoryFilter} onValueChange={setCategoryFilter}>
             <SelectTrigger id="category-filter">
               <SelectValue placeholder="เลือกประเภท" />
@@ -164,7 +164,7 @@ export const DrugsPage: React.FC = () => {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="search-input">ค้นหาตามชื่อ</Label>
+          <Label htmlFor="search-input" className="text-zinc-300">ค้นหาตามชื่อ</Label>
           <Input
             id="search-input"
             type="text"
@@ -177,25 +177,25 @@ export const DrugsPage: React.FC = () => {
 
       {/* Drug data table - exact structure from Streamlit */}
       <div className="mb-8">
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse border border-gray-300">
+        <div className="overflow-x-auto glass-panel rounded-xl">
+          <table className="w-full border-collapse">
             <thead>
-              <tr className="bg-gray-50">
-                <th className="border border-gray-300 px-4 py-2 text-left">ชื่อ</th>
-                <th className="border border-gray-300 px-4 py-2 text-left">สูตรโมเลกุล</th>
-                <th className="border border-gray-300 px-4 py-2 text-left">น้ำหนักโมเลกุล (g/mol)</th>
-                <th className="border border-gray-300 px-4 py-2 text-left">ประเภท</th>
-                <th className="border border-gray-300 px-4 py-2 text-left">แหล่งที่มา</th>
+              <tr className="bg-accent/10">
+                <th className="border border-white/[0.06] px-4 py-2 text-left text-zinc-100">ชื่อ</th>
+                <th className="border border-white/[0.06] px-4 py-2 text-left text-zinc-100">สูตรโมเลกุล</th>
+                <th className="border border-white/[0.06] px-4 py-2 text-left text-zinc-100">น้ำหนักโมเลกุล (g/mol)</th>
+                <th className="border border-white/[0.06] px-4 py-2 text-left text-zinc-100">ประเภท</th>
+                <th className="border border-white/[0.06] px-4 py-2 text-left text-zinc-100">แหล่งที่มา</th>
               </tr>
             </thead>
             <tbody>
               {filteredDrugs.map((drug) => (
-                <tr key={drug.cid} className="hover:bg-gray-50">
-                  <td className="border border-gray-300 px-4 py-2">{drug.name}</td>
-                  <td className="border border-gray-300 px-4 py-2 font-mono text-sm">{drug.molecular_formula}</td>
-                  <td className="border border-gray-300 px-4 py-2">{drug.molecular_weight}</td>
-                  <td className="border border-gray-300 px-4 py-2">{drug.category}</td>
-                  <td className="border border-gray-300 px-4 py-2">{drug.source}</td>
+                <tr key={drug.cid} className="hover:bg-white/[0.04]">
+                  <td className="border border-white/[0.06] px-4 py-2 text-zinc-300">{drug.name}</td>
+                  <td className="border border-white/[0.06] px-4 py-2 font-mono text-sm text-zinc-300">{drug.molecular_formula}</td>
+                  <td className="border border-white/[0.06] px-4 py-2 font-mono text-zinc-300">{drug.molecular_weight}</td>
+                  <td className="border border-white/[0.06] px-4 py-2 text-zinc-300">{drug.category}</td>
+                  <td className="border border-white/[0.06] px-4 py-2 text-zinc-300">{drug.source}</td>
                 </tr>
               ))}
             </tbody>
@@ -204,22 +204,22 @@ export const DrugsPage: React.FC = () => {
 
         {filteredDrugs.length === 0 && (
           <div className="text-center py-8">
-            <p className="text-gray-500 text-lg">ไม่พบสารยาที่ตรงกับเงื่อนไขการกรอง</p>
+            <p className="text-zinc-500 text-lg">ไม่พบสารยาที่ตรงกับเงื่อนไขการกรอง</p>
           </div>
         )}
       </div>
 
       {/* Drug detail section - exact structure from Streamlit */}
       {filteredDrugs.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle>รายละเอียดสารยา</CardTitle>
-          </CardHeader>
-          <CardContent>
+        <div className="glass-panel rounded-xl">
+          <div className="p-6 border-b border-white/[0.06]">
+            <h2 className="text-xl font-semibold text-zinc-100">รายละเอียดสารยา</h2>
+          </div>
+          <div className="p-6">
             <div className="space-y-4">
               {/* Drug selection */}
               <div className="space-y-2">
-                <Label htmlFor="drug-select">เลือกสารยาเพื่อดูรายละเอียด</Label>
+                <Label htmlFor="drug-select" className="text-zinc-300">เลือกสารยาเพื่อดูรายละเอียด</Label>
                 <Select value={selectedDrugName} onValueChange={setSelectedDrugName}>
                   <SelectTrigger id="drug-select">
                     <SelectValue placeholder="เลือกสารยา" />
@@ -238,25 +238,25 @@ export const DrugsPage: React.FC = () => {
               {selectedDrug && (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   {/* Left column - drug information */}
-                  <div className="space-y-4">
+                  <div className="glass-panel-light rounded-xl p-5 space-y-4">
                     <div>
-                      <h3 className="text-xl font-bold mb-3">{selectedDrug.name}</h3>
-                      <div className="space-y-1 text-sm">
-                        <p><strong>รหัส PubChem CID:</strong> {selectedDrug.cid}</p>
-                        <p><strong>สูตรโมเลกุล:</strong> {selectedDrug.molecular_formula}</p>
-                        <p><strong>น้ำหนักโมเลกุล:</strong> {selectedDrug.molecular_weight} g/mol</p>
-                        <p><strong>ประเภท:</strong> {selectedDrug.category}</p>
-                        <p><strong>กลไกการออกฤทธิ์:</strong> {selectedDrug.mechanism}</p>
-                        <p><strong>แหล่งที่มา:</strong> {selectedDrug.source}</p>
+                      <h3 className="text-xl font-bold mb-3 text-zinc-100">{selectedDrug.name}</h3>
+                      <div className="space-y-1 text-sm text-zinc-300">
+                        <p><strong className="text-zinc-100">รหัส PubChem CID:</strong> {selectedDrug.cid}</p>
+                        <p><strong className="text-zinc-100">สูตรโมเลกุล:</strong> <span className="font-mono">{selectedDrug.molecular_formula}</span></p>
+                        <p><strong className="text-zinc-100">น้ำหนักโมเลกุล:</strong> <span className="font-mono">{selectedDrug.molecular_weight} g/mol</span></p>
+                        <p><strong className="text-zinc-100">ประเภท:</strong> {selectedDrug.category}</p>
+                        <p><strong className="text-zinc-100">กลไกการออกฤทธิ์:</strong> {selectedDrug.mechanism}</p>
+                        <p><strong className="text-zinc-100">แหล่งที่มา:</strong> {selectedDrug.source}</p>
                       </div>
                     </div>
 
                     {/* SMILES display - exact structure from Streamlit */}
                     {selectedDrug.smiles && (
                       <div>
-                        <p className="font-bold mb-2">SMILES:</p>
-                        <div className="bg-gray-100 p-3 rounded-md">
-                          <code className="text-sm font-mono break-all">
+                        <p className="font-bold mb-2 text-zinc-100">SMILES:</p>
+                        <div className="bg-bio-800 p-3 rounded-md border border-white/[0.06]">
+                          <code className="text-sm font-mono break-all text-accent">
                             {selectedDrug.smiles}
                           </code>
                         </div>
@@ -268,12 +268,13 @@ export const DrugsPage: React.FC = () => {
                   <div className="space-y-4">
                     {selectedDrug.smiles && (
                       <div>
-                        <h4 className="font-bold mb-3">โครงสร้าง 3 มิติ:</h4>
-                        <div className="border rounded-lg overflow-hidden">
+                        <h4 className="font-bold mb-3 text-zinc-100">โครงสร้าง 3 มิติ:</h4>
+                        <div className="relative border border-accent/20 rounded-xl overflow-hidden">
                           <MolecularVisualization
                             smiles={selectedDrug.smiles}
                             drugName={selectedDrug.name}
                           />
+                          <div className="holographic-overlay" />
                         </div>
                       </div>
                     )}
@@ -281,8 +282,8 @@ export const DrugsPage: React.FC = () => {
                 </div>
               )}
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       )}
     </div>
   );

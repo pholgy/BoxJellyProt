@@ -115,8 +115,8 @@ export const ExportPage: React.FC = () => {
 
   if (!simulationResults || simulationResults.length === 0) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-8 text-center">📥 ส่งออกผลลัพธ์</h1>
+      <div className="max-w-[1400px] mx-auto p-6">
+        <h1 className="text-3xl font-bold mb-8 text-center text-zinc-100">📥 ส่งออกผลลัพธ์</h1>
         <Alert>
           <AlertDescription>
             ยังไม่มีผลลัพธ์ที่จะส่งออก กรุณาทำการจำลองก่อน!
@@ -128,23 +128,36 @@ export const ExportPage: React.FC = () => {
 
   const successfulResults = simulationResults.filter(r => r.is_successful);
 
+  // Helper to determine if a column contains scientific numeric data
+  const isScientificValue = (header: string, value: unknown): boolean => {
+    const scientificHeaders = [
+      'น้ำหนักโมเลกุล',
+      'Binding_Affinity_kcal_mol',
+      'พันธะไฮโดรเจน',
+      'Hydrophobic_Contacts',
+      'ΔG (kcal/mol)',
+      'H-bonds'
+    ];
+    return scientificHeaders.includes(header) && typeof value === 'number';
+  };
+
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="max-w-[1400px] mx-auto p-6">
       {/* Header - exact Thai text from Streamlit */}
-      <h1 className="text-3xl font-bold mb-8 text-center">📥 ส่งออกผลลัพธ์</h1>
+      <h1 className="text-3xl font-bold mb-8 text-center text-zinc-100">📥 ส่งออกผลลัพธ์</h1>
 
       {/* Export options section - exact structure from Streamlit */}
       <div className="mb-8">
-        <h2 className="text-xl font-bold mb-6">ตัวเลือกการส่งออก</h2>
+        <h2 className="text-xl font-bold mb-6 text-zinc-100">ตัวเลือกการส่งออก</h2>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* CSV Export - exact col1 structure from Streamlit */}
-          <Card>
+          <Card className="bio-card">
             <CardHeader>
               <CardTitle>📊 ส่งออก CSV</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-zinc-400">
                 ดาวน์โหลดผลลัพธ์เป็นไฟล์ CSV สำหรับวิเคราะห์ใน Excel หรือเครื่องมืออื่นๆ
               </p>
 
@@ -155,12 +168,12 @@ export const ExportPage: React.FC = () => {
           </Card>
 
           {/* Excel Export - exact col2 structure from Streamlit */}
-          <Card>
+          <Card className="bio-card">
             <CardHeader>
               <CardTitle>📑 ส่งออก Excel</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-zinc-400">
                 ดาวน์โหลดรายงาน Excel ที่มีหลายชีต
               </p>
 
@@ -174,14 +187,14 @@ export const ExportPage: React.FC = () => {
 
       {/* Data preview section - exact structure from Streamlit */}
       <div className="mb-8">
-        <h2 className="text-xl font-bold mb-4">📋 ตัวอย่างข้อมูลที่จะส่งออก</h2>
+        <h2 className="text-xl font-bold mb-4 text-zinc-100">📋 ตัวอย่างข้อมูลที่จะส่งออก</h2>
 
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse border border-gray-300">
+        <div className="overflow-x-auto rounded-lg border border-white/[0.06]">
+          <table className="w-full border-collapse">
             <thead>
-              <tr className="bg-gray-50">
+              <tr className="bg-white/[0.04]">
                 {Object.keys(exportData[0] || {}).map(header => (
-                  <th key={header} className="border border-gray-300 px-4 py-2 text-left text-sm font-medium">
+                  <th key={header} className="border-b border-white/[0.08] px-4 py-2 text-left text-sm font-medium text-zinc-300">
                     {header}
                   </th>
                 ))}
@@ -189,9 +202,12 @@ export const ExportPage: React.FC = () => {
             </thead>
             <tbody>
               {exportData.slice(0, 20).map((row, index) => ( // Show first 20 rows like Streamlit
-                <tr key={index} className="hover:bg-gray-50">
-                  {Object.values(row).map((value, cellIndex) => (
-                    <td key={cellIndex} className="border border-gray-300 px-4 py-2 text-sm">
+                <tr key={index} className="hover:bg-white/[0.04] border-b border-white/[0.06]">
+                  {Object.entries(row).map(([header, value], cellIndex) => (
+                    <td
+                      key={cellIndex}
+                      className={`px-4 py-2 text-sm text-zinc-300 ${isScientificValue(header, value) ? 'font-mono' : ''}`}
+                    >
                       {value}
                     </td>
                   ))}
@@ -202,7 +218,7 @@ export const ExportPage: React.FC = () => {
         </div>
 
         {exportData.length > 20 && (
-          <p className="text-sm text-gray-600 mt-2">
+          <p className="text-sm text-zinc-400 mt-2">
             แสดง 20 รายการแรก จากทั้งหมด {exportData.length} รายการ
           </p>
         )}
@@ -210,15 +226,15 @@ export const ExportPage: React.FC = () => {
 
       {/* Publication table section - exact structure from Streamlit */}
       <div className="mb-8">
-        <h2 className="text-xl font-bold mb-4">📝 ตารางสำหรับรายงานวิจัย</h2>
-        <p className="text-gray-600 mb-4">คัดลอกตารางนี้สำหรับใช้ในรายงานวิจัย:</p>
+        <h2 className="text-xl font-bold mb-4 text-zinc-100">📝 ตารางสำหรับรายงานวิจัย</h2>
+        <p className="text-zinc-400 mb-4">คัดลอกตารางนี้สำหรับใช้ในรายงานวิจัย:</p>
 
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse border border-gray-300">
+        <div className="overflow-x-auto rounded-lg border border-white/[0.06]">
+          <table className="w-full border-collapse">
             <thead>
-              <tr className="bg-gray-50">
+              <tr className="bg-white/[0.04]">
                 {Object.keys(publicationData[0] || {}).map(header => (
-                  <th key={header} className="border border-gray-300 px-4 py-2 text-left font-medium">
+                  <th key={header} className="border-b border-white/[0.08] px-4 py-2 text-left font-medium text-zinc-300">
                     {header}
                   </th>
                 ))}
@@ -226,9 +242,12 @@ export const ExportPage: React.FC = () => {
             </thead>
             <tbody>
               {publicationData.map((row, index) => (
-                <tr key={index} className="hover:bg-gray-50">
-                  {Object.values(row).map((value, cellIndex) => (
-                    <td key={cellIndex} className="border border-gray-300 px-4 py-2">
+                <tr key={index} className="hover:bg-white/[0.04] border-b border-white/[0.06]">
+                  {Object.entries(row).map(([header, value], cellIndex) => (
+                    <td
+                      key={cellIndex}
+                      className={`px-4 py-2 text-zinc-300 ${isScientificValue(header, value) ? 'font-mono' : ''}`}
+                    >
                       {value}
                     </td>
                   ))}
@@ -241,24 +260,24 @@ export const ExportPage: React.FC = () => {
 
       {/* Summary statistics */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
+        <Card className="bio-card">
           <CardContent className="p-6 text-center">
-            <div className="text-2xl font-bold">{exportData.length}</div>
-            <p className="text-sm text-gray-600">ผลลัพธ์ทั้งหมด</p>
+            <div className="text-2xl font-bold font-mono text-zinc-100">{exportData.length}</div>
+            <p className="text-sm text-zinc-400">ผลลัพธ์ทั้งหมด</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="bio-card">
           <CardContent className="p-6 text-center">
-            <div className="text-2xl font-bold">{successfulResults.length}</div>
-            <p className="text-sm text-gray-600">การจับที่สำเร็จ</p>
+            <div className="text-2xl font-bold font-mono text-zinc-100">{successfulResults.length}</div>
+            <p className="text-sm text-zinc-400">การจับที่สำเร็จ</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="bio-card">
           <CardContent className="p-6 text-center">
-            <div className="text-2xl font-bold">
+            <div className="text-2xl font-bold font-mono text-zinc-100">
               {sortedResults[0]?.binding_affinity.toFixed(1) || 'N/A'} kcal/mol
             </div>
-            <p className="text-sm text-gray-600">Affinity ที่ดีที่สุด</p>
+            <p className="text-sm text-zinc-400">Affinity ที่ดีที่สุด</p>
           </CardContent>
         </Card>
       </div>

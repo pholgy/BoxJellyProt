@@ -155,165 +155,172 @@ export const SimulationPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto px-4 py-8">
+      <div className="max-w-[1400px] mx-auto p-6">
         <div className="text-center">
-          <p className="text-lg">กำลังโหลดข้อมูล...</p>
+          <p className="text-lg text-zinc-300">กำลังโหลดข้อมูล...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="max-w-[1400px] mx-auto p-6">
       {/* Header - exact Thai text from Streamlit */}
-      <h1 className="text-3xl font-bold mb-8 text-center">🔬 การจำลอง Molecular Docking</h1>
+      <h1 className="text-3xl font-bold mb-8 text-center text-zinc-100">🔬 การจำลอง Molecular Docking</h1>
 
       {/* Selection sections - exact col1, col2 layout from Streamlit */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         {/* Protein selection - exact structure from Streamlit */}
-        <Card>
-          <CardHeader>
-            <CardTitle>เลือกโปรตีนเป้าหมาย</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="select-all-proteins"
-                checked={selectAllProteins}
-                onCheckedChange={handleSelectAllProteins}
-              />
-              <Label htmlFor="select-all-proteins">เลือกทุกโปรตีน</Label>
-            </div>
-
-            {!selectAllProteins && (
-              <div className="space-y-2">
-                <Label htmlFor="protein-multiselect">เลือกโปรตีน</Label>
-                <div className="border border-gray-300 rounded-md p-3 max-h-40 overflow-y-auto">
-                  {proteins.map((protein) => (
-                    <div key={protein.uniprot_id} className="flex items-center space-x-2 py-1">
-                      <Checkbox
-                        id={`protein-${protein.uniprot_id}`}
-                        checked={selectedProteins.some(p => p.uniprot_id === protein.uniprot_id)}
-                        onCheckedChange={(checked) => {
-                          if (checked) {
-                            setSelectedProteins([...selectedProteins, protein]);
-                          } else {
-                            setSelectedProteins(selectedProteins.filter(p => p.uniprot_id !== protein.uniprot_id));
-                          }
-                        }}
-                      />
-                      <Label htmlFor={`protein-${protein.uniprot_id}`} className="text-sm">
-                        {protein.name}
-                      </Label>
-                    </div>
-                  ))}
-                </div>
+        <div className="glass-panel p-0">
+          <Card className="bg-transparent border-0">
+            <CardHeader>
+              <CardTitle className="text-zinc-100">เลือกโปรตีนเป้าหมาย</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="select-all-proteins"
+                  checked={selectAllProteins}
+                  onCheckedChange={handleSelectAllProteins}
+                />
+                <Label htmlFor="select-all-proteins" className="text-zinc-300">เลือกทุกโปรตีน</Label>
               </div>
-            )}
 
-            <Badge variant="secondary">
-              เลือกแล้ว: {selectedProteins.length} โปรตีน
-            </Badge>
-          </CardContent>
-        </Card>
+              {!selectAllProteins && (
+                <div className="space-y-2">
+                  <Label htmlFor="protein-multiselect" className="text-zinc-300">เลือกโปรตีน</Label>
+                  <div className="border border-white/[0.08] rounded-md p-3 max-h-40 overflow-y-auto bio-scrollbar">
+                    {proteins.map((protein) => (
+                      <div key={protein.uniprot_id} className="flex items-center space-x-2 py-1">
+                        <Checkbox
+                          id={`protein-${protein.uniprot_id}`}
+                          checked={selectedProteins.some(p => p.uniprot_id === protein.uniprot_id)}
+                          onCheckedChange={(checked) => {
+                            if (checked) {
+                              setSelectedProteins([...selectedProteins, protein]);
+                            } else {
+                              setSelectedProteins(selectedProteins.filter(p => p.uniprot_id !== protein.uniprot_id));
+                            }
+                          }}
+                        />
+                        <Label htmlFor={`protein-${protein.uniprot_id}`} className="text-sm text-zinc-400">
+                          {protein.name}
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <Badge variant="secondary">
+                เลือกแล้ว: {selectedProteins.length} โปรตีน
+              </Badge>
+            </CardContent>
+          </Card>
+        </div>
 
         {/* Drug selection - exact structure from Streamlit */}
-        <Card>
-          <CardHeader>
-            <CardTitle>เลือกสารยาที่ต้องการทดสอบ</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="select-all-drugs"
-                checked={selectAllDrugs}
-                onCheckedChange={handleSelectAllDrugs}
-              />
-              <Label htmlFor="select-all-drugs">เลือกทุกสารยา</Label>
-            </div>
-
-            {!selectAllDrugs && (
-              <div className="space-y-2">
-                <Label htmlFor="drug-multiselect">เลือกสารยา</Label>
-                <div className="border border-gray-300 rounded-md p-3 max-h-40 overflow-y-auto">
-                  {drugs.map((drug) => (
-                    <div key={drug.cid} className="flex items-center space-x-2 py-1">
-                      <Checkbox
-                        id={`drug-${drug.cid}`}
-                        checked={selectedDrugs.some(d => d.cid === drug.cid)}
-                        onCheckedChange={(checked) => {
-                          if (checked) {
-                            setSelectedDrugs([...selectedDrugs, drug]);
-                          } else {
-                            setSelectedDrugs(selectedDrugs.filter(d => d.cid !== drug.cid));
-                          }
-                        }}
-                      />
-                      <Label htmlFor={`drug-${drug.cid}`} className="text-sm">
-                        {drug.name}
-                      </Label>
-                    </div>
-                  ))}
-                </div>
+        <div className="glass-panel p-0">
+          <Card className="bg-transparent border-0">
+            <CardHeader>
+              <CardTitle className="text-zinc-100">เลือกสารยาที่ต้องการทดสอบ</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="select-all-drugs"
+                  checked={selectAllDrugs}
+                  onCheckedChange={handleSelectAllDrugs}
+                />
+                <Label htmlFor="select-all-drugs" className="text-zinc-300">เลือกทุกสารยา</Label>
               </div>
-            )}
 
-            <Badge variant="secondary">
-              เลือกแล้ว: {selectedDrugs.length} สารยา
-            </Badge>
-          </CardContent>
-        </Card>
+              {!selectAllDrugs && (
+                <div className="space-y-2">
+                  <Label htmlFor="drug-multiselect" className="text-zinc-300">เลือกสารยา</Label>
+                  <div className="border border-white/[0.08] rounded-md p-3 max-h-40 overflow-y-auto bio-scrollbar">
+                    {drugs.map((drug) => (
+                      <div key={drug.cid} className="flex items-center space-x-2 py-1">
+                        <Checkbox
+                          id={`drug-${drug.cid}`}
+                          checked={selectedDrugs.some(d => d.cid === drug.cid)}
+                          onCheckedChange={(checked) => {
+                            if (checked) {
+                              setSelectedDrugs([...selectedDrugs, drug]);
+                            } else {
+                              setSelectedDrugs(selectedDrugs.filter(d => d.cid !== drug.cid));
+                            }
+                          }}
+                        />
+                        <Label htmlFor={`drug-${drug.cid}`} className="text-sm text-zinc-400">
+                          {drug.name}
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <Badge variant="secondary">
+                เลือกแล้ว: {selectedDrugs.length} สารยา
+              </Badge>
+            </CardContent>
+          </Card>
+        </div>
       </div>
 
       {/* Simulation settings - exact col1, col2, col3 layout from Streamlit */}
-      <Card className="mb-8">
-        <CardHeader>
-          <CardTitle>⚙️ ตั้งค่าการจำลอง</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="space-y-2">
-              <Label htmlFor="exhaustiveness">ความละเอียด (Exhaustiveness)</Label>
-              <Input
-                id="exhaustiveness"
-                type="range"
-                min="1"
-                max="32"
-                value={exhaustiveness}
-                onChange={(e) => setExhaustiveness(Number(e.target.value))}
-                className="w-full"
-              />
-              <p className="text-sm text-gray-600 text-center">{exhaustiveness}</p>
-            </div>
+      <div className="glass-panel p-0 mb-8">
+        <Card className="bg-transparent border-0">
+          <CardHeader>
+            <CardTitle className="text-zinc-100">⚙️ ตั้งค่าการจำลอง</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="space-y-2">
+                <Label htmlFor="exhaustiveness" className="text-zinc-300">ความละเอียด (Exhaustiveness)</Label>
+                <Input
+                  id="exhaustiveness"
+                  type="range"
+                  min="1"
+                  max="32"
+                  value={exhaustiveness}
+                  onChange={(e) => setExhaustiveness(Number(e.target.value))}
+                  className="w-full"
+                />
+                <p className="text-sm text-zinc-400 text-center font-mono">{exhaustiveness}</p>
+              </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="num-modes">จำนวน poses</Label>
-              <Input
-                id="num-modes"
-                type="range"
-                min="1"
-                max="20"
-                value={numModes}
-                onChange={(e) => setNumModes(Number(e.target.value))}
-                className="w-full"
-              />
-              <p className="text-sm text-gray-600 text-center">{numModes}</p>
-            </div>
+              <div className="space-y-2">
+                <Label htmlFor="num-modes" className="text-zinc-300">จำนวน poses</Label>
+                <Input
+                  id="num-modes"
+                  type="range"
+                  min="1"
+                  max="20"
+                  value={numModes}
+                  onChange={(e) => setNumModes(Number(e.target.value))}
+                  className="w-full"
+                />
+                <p className="text-sm text-zinc-400 text-center font-mono">{numModes}</p>
+              </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="random-seed">Random seed</Label>
-              <Input
-                id="random-seed"
-                type="number"
-                min="0"
-                max="9999"
-                value={randomSeed}
-                onChange={(e) => setRandomSeed(Number(e.target.value))}
-              />
+              <div className="space-y-2">
+                <Label htmlFor="random-seed" className="text-zinc-300">Random seed</Label>
+                <Input
+                  id="random-seed"
+                  type="number"
+                  min="0"
+                  max="9999"
+                  value={randomSeed}
+                  onChange={(e) => setRandomSeed(Number(e.target.value))}
+                  className="font-mono"
+                />
+              </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Simulation execution section */}
       <div className="space-y-6">
@@ -329,7 +336,7 @@ export const SimulationPage: React.FC = () => {
           onClick={runSimulation}
           disabled={isSimulating}
           size="lg"
-          className="w-full"
+          className="w-full bio-button-primary"
         >
           🚀 เริ่มการจำลอง
         </Button>
@@ -337,7 +344,7 @@ export const SimulationPage: React.FC = () => {
         {/* Progress and status */}
         {isSimulating && (
           <div className="space-y-4">
-            <p className="text-center">
+            <p className="text-center text-zinc-300">
               กำลังจำลอง {selectedProteins.length * selectedDrugs.length} การทดลอง...
             </p>
             <Progress value={simulationProgress} className="w-full" />
@@ -354,41 +361,43 @@ export const SimulationPage: React.FC = () => {
             </Alert>
 
             {/* Preview results - exact structure from Streamlit */}
-            <Card>
-              <CardHeader>
-                <CardTitle>ตัวอย่างผลลัพธ์</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="overflow-x-auto">
-                  <table className="w-full border-collapse border border-gray-300">
-                    <thead>
-                      <tr className="bg-gray-50">
-                        <th className="border border-gray-300 px-4 py-2 text-left">สารยา</th>
-                        <th className="border border-gray-300 px-4 py-2 text-left">โปรตีน</th>
-                        <th className="border border-gray-300 px-4 py-2 text-left">Binding Affinity</th>
-                        <th className="border border-gray-300 px-4 py-2 text-left">ระดับ</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {previewResults.map((result, index) => (
-                        <tr key={index} className="hover:bg-gray-50">
-                          <td className="border border-gray-300 px-4 py-2">{result.สารยา}</td>
-                          <td className="border border-gray-300 px-4 py-2">{result.โปรตีน}</td>
-                          <td className="border border-gray-300 px-4 py-2">{result['Binding Affinity']}</td>
-                          <td className="border border-gray-300 px-4 py-2">{result.ระดับ}</td>
+            <div className="glass-panel p-0">
+              <Card className="bg-transparent border-0">
+                <CardHeader>
+                  <CardTitle className="text-zinc-100">ตัวอย่างผลลัพธ์</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="overflow-x-auto">
+                    <table className="w-full border-collapse border border-white/[0.08]">
+                      <thead>
+                        <tr className="bg-accent/10">
+                          <th className="border border-white/[0.08] px-4 py-2 text-left text-zinc-100">สารยา</th>
+                          <th className="border border-white/[0.08] px-4 py-2 text-left text-zinc-100">โปรตีน</th>
+                          <th className="border border-white/[0.08] px-4 py-2 text-left text-zinc-100">Binding Affinity</th>
+                          <th className="border border-white/[0.08] px-4 py-2 text-left text-zinc-100">ระดับ</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                      </thead>
+                      <tbody>
+                        {previewResults.map((result, index) => (
+                          <tr key={index} className="hover:bg-white/[0.04]">
+                            <td className="border border-white/[0.06] px-4 py-2 text-zinc-300">{result.สารยา}</td>
+                            <td className="border border-white/[0.06] px-4 py-2 text-zinc-300">{result.โปรตีน}</td>
+                            <td className="border border-white/[0.06] px-4 py-2 text-zinc-300 font-mono">{result['Binding Affinity']}</td>
+                            <td className="border border-white/[0.06] px-4 py-2 text-zinc-300">{result.ระดับ}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
 
-                <div className="mt-4">
-                  <Badge variant="secondary">
-                    ไปที่หน้า **ผลลัพธ์** เพื่อดูรายละเอียดเพิ่มเติม!
-                  </Badge>
-                </div>
-              </CardContent>
-            </Card>
+                  <div className="mt-4">
+                    <Badge variant="secondary">
+                      ไปที่หน้า **ผลลัพธ์** เพื่อดูรายละเอียดเพิ่มเติม!
+                    </Badge>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         )}
       </div>
