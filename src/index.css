@@ -1,6 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+  font-family: 'Noto Sans Thai', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
 
 .main-header {
   font-size: 2.5rem;
@@ -14,4 +20,49 @@
   color: #666;
   text-align: center;
   margin-bottom: 2rem;
+}
+
+/* Streamlit-style metrics */
+.metric-card {
+  background-color: #f0f2f6;
+  border-radius: 10px;
+  padding: 1rem;
+  text-align: center;
+}
+
+/* Result rating colors matching Streamlit */
+.result-excellent {
+  color: #2E7D32;
+  font-weight: bold;
+}
+
+.result-good {
+  color: #1976D2;
+  font-weight: bold;
+}
+
+.result-moderate {
+  color: #F57C00;
+}
+
+.result-weak {
+  color: #D32F2F;
+}
+
+/* Sidebar styling for better match with Streamlit */
+.sidebar-nav-item {
+  transition: all 0.2s ease-in-out;
+  border-radius: 0.375rem;
+}
+
+.sidebar-nav-item:hover {
+  background-color: rgb(249 250 251);
+  transform: translateX(2px);
+}
+
+.sidebar-nav-item.active {
+  background-color: rgb(239 246 255);
+  color: rgb(37 99 235);
+  border: 1px solid rgb(191 219 254);
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
 }
