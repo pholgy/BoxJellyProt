@@ -1,0 +1,1 @@
+export { JellyfishIcon } from './JellyfishIcon';

@@ -1,0 +1,1 @@
+export { ErrorBoundary, DatabaseErrorBoundary } from './ErrorBoundary';

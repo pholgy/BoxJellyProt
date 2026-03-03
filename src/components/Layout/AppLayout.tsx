@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Sidebar } from './Sidebar';
 import { DatabaseService } from '../../services/database';
+import { ErrorBoundary } from '../ErrorBoundary';
 
 export interface AppLayoutProps {
   children: React.ReactNode;
@@ -36,22 +37,36 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   };
 
   return (
-    <div
-      className="flex h-screen bg-gray-50"
-      data-testid="app-layout"
-    >
-      {/* Sidebar */}
-      <Sidebar
-        currentPage={page}
-        onNavigate={handleNavigation}
-      />
+    <ErrorBoundary>
+      <div
+        className="flex h-screen bg-gray-50"
+        data-testid="app-layout"
+      >
+        {/* Sidebar */}
+        <ErrorBoundary
+          fallback={
+            <div className="w-72 h-screen bg-white border-r border-gray-200 flex items-center justify-center">
+              <div className="text-center text-gray-500">
+                <p>เมนูไม่สามารถโหลดได้</p>
+              </div>
+            </div>
+          }
+        >
+          <Sidebar
+            currentPage={page}
+            onNavigate={handleNavigation}
+          />
+        </ErrorBoundary>
 
-      {/* Main Content Area */}
-      <main className="flex-1 overflow-auto">
-        <div className="h-full">
-          {children}
-        </div>
-      </main>
-    </div>
+        {/* Main Content Area */}
+        <main className="flex-1 overflow-auto">
+          <ErrorBoundary>
+            <div className="h-full">
+              {children}
+            </div>
+          </ErrorBoundary>
+        </main>
+      </div>
+    </ErrorBoundary>
   );
 };
