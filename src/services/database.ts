@@ -407,14 +407,60 @@ const DRUG_CANDIDATES_DATA = [
 ];
 
 // ============================================================================
+// CACHING AND PERFORMANCE OPTIMIZATIONS
+// ============================================================================
+
+// Cache for expensive computations
+const cache = {
+  allProteins: null as Protein[] | null,
+  allDrugs: null as DrugCandidate[] | null,
+  proteinsByOrganism: new Map<string, Protein[]>(),
+  proteinsByToxinType: new Map<string, Protein[]>(),
+  drugsByCategory: new Map<string, DrugCandidate[]>(),
+  databaseStats: null as DatabaseStats | null
+};
+
+/**
+ * Clear all caches - useful for testing or if data changes
+ */
+export function clearCache(): void {
+  cache.allProteins = null;
+  cache.allDrugs = null;
+  cache.proteinsByOrganism.clear();
+  cache.proteinsByToxinType.clear();
+  cache.drugsByCategory.clear();
+  cache.databaseStats = null;
+}
+
+/**
+ * Get cache statistics for monitoring
+ */
+export function getCacheStats() {
+  return {
+    proteinsByOrganismCacheSize: cache.proteinsByOrganism.size,
+    proteinsByToxinTypeCacheSize: cache.proteinsByToxinType.size,
+    drugsByCategoryCacheSize: cache.drugsByCategory.size,
+    hasAllProteinsCache: cache.allProteins !== null,
+    hasAllDrugsCache: cache.allDrugs !== null,
+    hasDatabaseStatsCache: cache.databaseStats !== null
+  };
+}
+
+// ============================================================================
 // DATABASE ACCESS FUNCTIONS
 // ============================================================================
 
 /**
  * Get all jellyfish toxin proteins from database
  * Port from Python get_all_proteins() function
+ * Uses caching for performance optimization
  */
 export function getAllProteins(): Protein[] {
+  // Return cached result if available
+  if (cache.allProteins !== null) {
+    return cache.allProteins;
+  }
+
   const proteins: Protein[] = [];
 
   for (const [key, data] of Object.entries(JELLYFISH_TOXINS_DATA)) {
@@ -432,14 +478,22 @@ export function getAllProteins(): Protein[] {
     proteins.push(protein);
   }
 
+  // Cache the result for future calls
+  cache.allProteins = proteins;
   return proteins;
 }
 
 /**
  * Get all drug candidates from database
  * Port from Python get_all_drugs() function
+ * Uses caching for performance optimization
  */
 export function getAllDrugs(): DrugCandidate[] {
+  // Return cached result if available
+  if (cache.allDrugs !== null) {
+    return cache.allDrugs;
+  }
+
   const drugs: DrugCandidate[] = [];
 
   for (const data of DRUG_CANDIDATES_DATA) {
@@ -456,47 +510,160 @@ export function getAllDrugs(): DrugCandidate[] {
     drugs.push(drug);
   }
 
+  // Cache the result for future calls
+  cache.allDrugs = drugs;
   return drugs;
 }
 
 /**
  * Get proteins filtered by organism name
  * Port from Python get_proteins_by_organism() function
+ *
+ * @param organism - The organism name to search for (case-insensitive partial match)
+ * @returns Array of proteins matching the organism search term
+ * @throws Error if input validation fails
  */
 export function getProteinsByOrganism(organism: string): Protein[] {
-  const allProteins = getAllProteins();
-  return allProteins.filter(p =>
-    p.organism.toLowerCase().includes(organism.toLowerCase())
-  );
+  // Input validation
+  if (organism === null || organism === undefined) {
+    console.warn('getProteinsByOrganism: received null/undefined input, returning empty array');
+    return [];
+  }
+
+  if (typeof organism !== 'string') {
+    console.warn('getProteinsByOrganism: received non-string input, converting to string');
+    organism = String(organism);
+  }
+
+  const searchTerm = organism.toLowerCase().trim();
+
+  // Check cache first
+  if (cache.proteinsByOrganism.has(searchTerm)) {
+    return cache.proteinsByOrganism.get(searchTerm)!;
+  }
+
+  try {
+    const allProteins = getAllProteins();
+
+    const results = allProteins.filter(p => {
+      if (!p.organism || typeof p.organism !== 'string') {
+        return false;
+      }
+      return p.organism.toLowerCase().includes(searchTerm);
+    });
+
+    // Cache the result for future calls
+    cache.proteinsByOrganism.set(searchTerm, results);
+    return results;
+  } catch (error) {
+    console.error('Error in getProteinsByOrganism:', error);
+    throw new Error(`Failed to filter proteins by organism "${organism}": ${error instanceof Error ? error.message : 'Unknown error'}`);
+  }
 }
 
 /**
  * Get proteins filtered by toxin type
  * Port from Python get_proteins_by_toxin_type() function
+ *
+ * @param toxinType - The toxin type to search for (case-insensitive partial match)
+ * @returns Array of proteins matching the toxin type search term
+ * @throws Error if input validation fails
  */
 export function getProteinsByToxinType(toxinType: string): Protein[] {
-  const allProteins = getAllProteins();
-  return allProteins.filter(p =>
-    p.toxin_type.toLowerCase().includes(toxinType.toLowerCase())
-  );
+  // Input validation
+  if (toxinType === null || toxinType === undefined) {
+    console.warn('getProteinsByToxinType: received null/undefined input, returning empty array');
+    return [];
+  }
+
+  if (typeof toxinType !== 'string') {
+    console.warn('getProteinsByToxinType: received non-string input, converting to string');
+    toxinType = String(toxinType);
+  }
+
+  const searchTerm = toxinType.toLowerCase().trim();
+
+  // Check cache first
+  if (cache.proteinsByToxinType.has(searchTerm)) {
+    return cache.proteinsByToxinType.get(searchTerm)!;
+  }
+
+  try {
+    const allProteins = getAllProteins();
+
+    const results = allProteins.filter(p => {
+      if (!p.toxin_type || typeof p.toxin_type !== 'string') {
+        return false;
+      }
+      return p.toxin_type.toLowerCase().includes(searchTerm);
+    });
+
+    // Cache the result for future calls
+    cache.proteinsByToxinType.set(searchTerm, results);
+    return results;
+  } catch (error) {
+    console.error('Error in getProteinsByToxinType:', error);
+    throw new Error(`Failed to filter proteins by toxin type "${toxinType}": ${error instanceof Error ? error.message : 'Unknown error'}`);
+  }
 }
 
 /**
  * Get drugs filtered by category
  * Port from Python get_drugs_by_category() function
+ *
+ * @param category - The drug category to search for (case-insensitive partial match)
+ * @returns Array of drugs matching the category search term
+ * @throws Error if input validation fails
  */
 export function getDrugsByCategory(category: string): DrugCandidate[] {
-  const allDrugs = getAllDrugs();
-  return allDrugs.filter(d =>
-    d.category.toLowerCase().includes(category.toLowerCase())
-  );
+  // Input validation
+  if (category === null || category === undefined) {
+    console.warn('getDrugsByCategory: received null/undefined input, returning empty array');
+    return [];
+  }
+
+  if (typeof category !== 'string') {
+    console.warn('getDrugsByCategory: received non-string input, converting to string');
+    category = String(category);
+  }
+
+  const searchTerm = category.toLowerCase().trim();
+
+  // Check cache first
+  if (cache.drugsByCategory.has(searchTerm)) {
+    return cache.drugsByCategory.get(searchTerm)!;
+  }
+
+  try {
+    const allDrugs = getAllDrugs();
+
+    const results = allDrugs.filter(d => {
+      if (!d.category || typeof d.category !== 'string') {
+        return false;
+      }
+      return d.category.toLowerCase().includes(searchTerm);
+    });
+
+    // Cache the result for future calls
+    cache.drugsByCategory.set(searchTerm, results);
+    return results;
+  } catch (error) {
+    console.error('Error in getDrugsByCategory:', error);
+    throw new Error(`Failed to filter drugs by category "${category}": ${error instanceof Error ? error.message : 'Unknown error'}`);
+  }
 }
 
 /**
  * Get statistics about the database
  * Port from Python get_database_stats() function
+ * Uses caching for performance optimization
  */
 export function getDatabaseStats(): DatabaseStats {
+  // Return cached result if available
+  if (cache.databaseStats !== null) {
+    return cache.databaseStats;
+  }
+
   const proteins = getAllProteins();
   const drugs = getAllDrugs();
 
@@ -508,11 +675,15 @@ export function getDatabaseStats(): DatabaseStats {
     drugs.map(d => d.category).filter(c => c !== "")
   ));
 
-  return {
+  const stats = {
     total_proteins: proteins.length,
     total_drugs: drugs.length,
     organisms: organisms,
     toxin_types: toxinTypes,
     drug_categories: drugCategories
   };
+
+  // Cache the result for future calls
+  cache.databaseStats = stats;
+  return stats;
 }
