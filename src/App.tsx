@@ -2,6 +2,11 @@ import React, { useState } from 'react';
 import { ConfigProvider } from 'antd';
 import { AppLayout } from './components/Layout';
 import { HomePage } from './pages/HomePage';
+import { ProteinsPage } from './pages/ProteinsPage';
+import { DrugsPage } from './pages/DrugsPage';
+import { SimulationPage } from './pages/SimulationPage';
+import { ResultsPage } from './pages/ResultsPage';
+import { ExportPage } from './pages/ExportPage';
 import './index.css';
 
 const App: React.FC = () => {
@@ -34,40 +39,15 @@ const App: React.FC = () => {
       case 'home':
         return <HomePage />;
       case 'proteins':
-        return (
-          <div className="p-6">
-            <h1 className="text-2xl font-bold mb-4">🧬 โปรตีนพิษ</h1>
-            <p className="text-gray-600">Proteins Page - Coming Soon</p>
-          </div>
-        );
+        return <ProteinsPage />;
       case 'drugs':
-        return (
-          <div className="p-6">
-            <h1 className="text-2xl font-bold mb-4">💊 สารยา</h1>
-            <p className="text-gray-600">Drugs Page - Coming Soon</p>
-          </div>
-        );
+        return <DrugsPage />;
       case 'simulation':
-        return (
-          <div className="p-6">
-            <h1 className="text-2xl font-bold mb-4">🔬 จำลองการทดลอง</h1>
-            <p className="text-gray-600">Simulation Page - Coming Soon</p>
-          </div>
-        );
+        return <SimulationPage />;
       case 'results':
-        return (
-          <div className="p-6">
-            <h1 className="text-2xl font-bold mb-4">📊 ผลลัพธ์</h1>
-            <p className="text-gray-600">Results Page - Coming Soon</p>
-          </div>
-        );
+        return <ResultsPage />;
       case 'export':
-        return (
-          <div className="p-6">
-            <h1 className="text-2xl font-bold mb-4">📥 ส่งออกข้อมูล</h1>
-            <p className="text-gray-600">Export Page - Coming Soon</p>
-          </div>
-        );
+        return <ExportPage />;
       default:
         return <HomePage />;
     }

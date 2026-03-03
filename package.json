@@ -21,6 +21,8 @@
     "@types/three": "^0.158.0",
     "three": "^0.158.0",
     "@react-three/fiber": "^8.15.0",
+    "@react-three/drei": "^9.88.0",
+    "@heroicons/react": "^2.0.0",
     "lucide-react": "^0.294.0"
   },
   "devDependencies": {
