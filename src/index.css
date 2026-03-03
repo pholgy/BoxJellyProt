@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.main-header {
+  font-size: 2.5rem;
+  color: #1E88E5;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.sub-header {
+  font-size: 1.2rem;
+  color: #666;
+  text-align: center;
+  margin-bottom: 2rem;
+}
