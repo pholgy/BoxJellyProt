@@ -50,12 +50,21 @@ const MolecularVisualization: React.FC<{ smiles: string; drugName: string }> = (
 
   return (
     <Canvas style={{ height: '330px', width: '100%', background: '#0a0f14' }}>
-      <ambientLight intensity={0.5} />
-      <pointLight position={[10, 10, 10]} />
+      <ambientLight intensity={0.4} />
+      <pointLight position={[10, 10, 10]} color="#00D4FF" intensity={0.6} />
+      <pointLight position={[-10, -10, -5]} color="#4ECDC4" intensity={0.3} />
 
       {atoms.map((atom) => (
         <Sphere key={atom.id} position={atom.position} scale={[0.3, 0.3, 0.3]}>
-          <meshStandardMaterial color={atom.color} />
+          <meshStandardMaterial
+            color={atom.color}
+            transparent
+            opacity={0.9}
+            emissive={atom.color}
+            emissiveIntensity={0.15}
+            roughness={0.3}
+            metalness={0.5}
+          />
         </Sphere>
       ))}
 
@@ -72,7 +81,7 @@ const MolecularVisualization: React.FC<{ smiles: string; drugName: string }> = (
           return (
             <mesh key={`bond-${i}`} position={midpoint}>
               <cylinderGeometry args={[0.05, 0.05, 1]} />
-              <meshStandardMaterial color="#888888" />
+              <meshStandardMaterial color="#4ECDC4" transparent opacity={0.6} emissive="#4ECDC4" emissiveIntensity={0.1} />
             </mesh>
           );
         }

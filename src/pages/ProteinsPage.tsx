@@ -31,9 +31,10 @@ const AlphaHelixVisualization: React.FC<{ proteinId: string; sequence: string }>
   sequence
 }) => {
   return (
-    <Canvas style={{ height: '280px', width: '100%' }}>
-      <ambientLight intensity={0.5} />
-      <pointLight position={[10, 10, 10]} />
+    <Canvas style={{ height: '280px', width: '100%', background: '#0a0f14' }}>
+      <ambientLight intensity={0.4} />
+      <pointLight position={[10, 10, 10]} color="#00D4FF" intensity={0.6} />
+      <pointLight position={[-10, -10, -5]} color="#4ECDC4" intensity={0.3} />
 
       {/* Create alpha helix structure - series of boxes representing protein backbone */}
       {Array.from({ length: Math.min(20, sequence.length / 10) }, (_, i) => {
@@ -49,7 +50,15 @@ const AlphaHelixVisualization: React.FC<{ proteinId: string; sequence: string }>
             scale={[0.2, 0.2, 0.2]}
             rotation={[0, t, 0]}
           >
-            <meshStandardMaterial color={`hsl(${(i * 360) / 20}, 70%, 50%)`} />
+            <meshStandardMaterial
+              color={`hsl(${185 + (i * 15)}, 70%, 55%)`}
+              transparent
+              opacity={0.85}
+              emissive={`hsl(${185 + (i * 15)}, 60%, 20%)`}
+              emissiveIntensity={0.3}
+              roughness={0.3}
+              metalness={0.6}
+            />
           </Box>
         );
       })}
