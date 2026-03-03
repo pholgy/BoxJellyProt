@@ -1,27 +1,95 @@
-import React from 'react'
+import React, { useState } from 'react';
+import { ConfigProvider } from 'antd';
+import { AppLayout } from './components/Layout';
+import { HomePage } from './pages/HomePage';
+import './index.css';
 
-function App() {
+const App: React.FC = () => {
+  const [currentPage, setCurrentPage] = useState('🏠 หน้าแรก');
+
+  // Map Thai navigation items to internal route keys
+  const getRouteFromPage = (page: string): string => {
+    switch (page) {
+      case '🏠 หน้าแรก':
+        return 'home';
+      case '🧬 โปรตีนพิษ':
+        return 'proteins';
+      case '💊 สารยา':
+        return 'drugs';
+      case '🔬 จำลองการทดลอง':
+        return 'simulation';
+      case '📊 ผลลัพธ์':
+        return 'results';
+      case '📥 ส่งออกข้อมูล':
+        return 'export';
+      default:
+        return 'home';
+    }
+  };
+
+  const renderPage = () => {
+    const route = getRouteFromPage(currentPage);
+
+    switch (route) {
+      case 'home':
+        return <HomePage />;
+      case 'proteins':
+        return (
+          <div className="p-6">
+            <h1 className="text-2xl font-bold mb-4">🧬 โปรตีนพิษ</h1>
+            <p className="text-gray-600">Proteins Page - Coming Soon</p>
+          </div>
+        );
+      case 'drugs':
+        return (
+          <div className="p-6">
+            <h1 className="text-2xl font-bold mb-4">💊 สารยา</h1>
+            <p className="text-gray-600">Drugs Page - Coming Soon</p>
+          </div>
+        );
+      case 'simulation':
+        return (
+          <div className="p-6">
+            <h1 className="text-2xl font-bold mb-4">🔬 จำลองการทดลอง</h1>
+            <p className="text-gray-600">Simulation Page - Coming Soon</p>
+          </div>
+        );
+      case 'results':
+        return (
+          <div className="p-6">
+            <h1 className="text-2xl font-bold mb-4">📊 ผลลัพธ์</h1>
+            <p className="text-gray-600">Results Page - Coming Soon</p>
+          </div>
+        );
+      case 'export':
+        return (
+          <div className="p-6">
+            <h1 className="text-2xl font-bold mb-4">📥 ส่งออกข้อมูล</h1>
+            <p className="text-gray-600">Export Page - Coming Soon</p>
+          </div>
+        );
+      default:
+        return <HomePage />;
+    }
+  };
+
+  const handlePageChange = (page: string) => {
+    setCurrentPage(page);
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="main-header">
-          วิเคราะห์โครงสร้างโปรตีนในพิษแมงกะพรุนกล่อง
-        </h1>
-        <p className="sub-header">
-          Box Jellyfish Toxin Protein Structure Analysis Program<br />
-          Using Bioinformatics Database for Future Antivenom Drug Design
-        </p>
-        <div className="text-center">
-          <p className="text-lg text-gray-600 mb-4">
-            🪼 React Migration Setup Complete!
-          </p>
-          <p className="text-sm text-gray-500">
-            Ready to begin migrating functionality from Streamlit
-          </p>
-        </div>
-      </div>
-    </div>
-  )
-}
+    <ConfigProvider
+      theme={{
+        token: {
+          colorPrimary: '#1E88E5',
+        },
+      }}
+    >
+      <AppLayout currentPage={currentPage} onPageChange={handlePageChange}>
+        {renderPage()}
+      </AppLayout>
+    </ConfigProvider>
+  );
+};
 
-export default App
+export default App;
