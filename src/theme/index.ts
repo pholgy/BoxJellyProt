@@ -1,1 +1,1 @@
-export { bioColors, antdBioTheme, cssCustomProperties } from './bioluminescent';
+export { themeColors, antdBioTheme } from './bioluminescent';

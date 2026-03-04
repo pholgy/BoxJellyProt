@@ -1,44 +1,45 @@
 .homepage {
-  padding: 2.5rem;
-  max-width: 1400px;
+  max-width: 72rem; /* max-w-6xl */
   margin: 0 auto;
 }
 
 .header-section {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 2rem;
 }
 
 .main-header {
-  color: #1890ff !important;
-  margin-bottom: 16px !important;
-  font-size: 2.2rem !important;
-  font-weight: bold !important;
+  color: var(--text-primary) !important;
+  margin-bottom: 0.5rem !important;
+  font-size: 1.5rem !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.025em !important;
 }
 
 .sub-header {
-  font-size: 1.1rem;
-  color: #666;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
   margin-bottom: 0 !important;
 }
 
 /* === Feature Cards === */
 .feature-cards {
-  margin-bottom: 40px;
+  margin-bottom: 2rem;
 }
 
 .feature-cards .ant-card {
   height: 100%;
-  background: var(--bio-glass-bg);
-  border: 1px solid var(--bio-glass-border);
-  backdrop-filter: blur(12px);
-  border-radius: 1rem;
-  transition: all 0.3s var(--bio-ease);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  transition: all 0.25s var(--ease);
+  box-shadow: var(--shadow-sm);
 }
 
 .feature-cards .ant-card:hover {
-  border-color: var(--bio-accent-border);
-  transform: translateY(-2px);
+  border-color: var(--accent-border);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
 }
 
 .feature-cards .ant-card-head-title {
@@ -57,6 +58,7 @@
   line-height: 1.5;
   padding-left: 1.2em;
   position: relative;
+  color: var(--text-secondary);
 }
 
 .feature-cards .ant-card-body li::before {
@@ -67,36 +69,37 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--bio-accent);
-  box-shadow: 0 0 6px var(--bio-accent-glow);
+  background: var(--accent);
 }
 
 .feature-cards .ant-card-body strong {
-  color: var(--bio-accent);
+  color: var(--accent);
 }
 
 /* === Workflow Section === */
 .workflow-section {
-  margin-bottom: 40px;
+  margin-bottom: 2rem;
 }
 
 .workflow-section h2 {
-  margin-bottom: 24px !important;
-  color: #333;
+  margin-bottom: 1rem !important;
+  color: var(--text-primary);
+  font-size: 1.125rem !important;
+  font-weight: 600 !important;
 }
 
 .workflow-section .ant-table-wrapper {
-  border-radius: 1rem;
-  border: 1px solid var(--bio-accent-border);
+  border-radius: 0.75rem;
+  border: 1px solid var(--border);
   overflow: hidden;
 }
 
 .workflow-section .ant-table {
-  border-radius: 1rem;
+  border-radius: 0.75rem;
 }
 
 .workflow-section .ant-alert {
-  border-radius: 6px;
+  border-radius: 0.625rem;
 }
 
 .workflow-section .ant-alert ol {
@@ -110,12 +113,14 @@
 
 /* === Featured Results === */
 .featured-results {
-  margin-bottom: 40px;
+  margin-bottom: 2rem;
 }
 
 .featured-results h2 {
-  margin-bottom: 24px !important;
-  color: #333;
+  margin-bottom: 1rem !important;
+  color: var(--text-primary);
+  font-size: 1.125rem !important;
+  font-weight: 600 !important;
 }
 
 .featured-metric .ant-statistic-title {
@@ -130,13 +135,13 @@
 }
 
 .featured-metric .ant-statistic-content-value {
-  color: var(--bio-accent);
+  color: var(--accent);
 }
 
 .binding-affinity {
   font-size: 1.2rem;
   font-weight: 700;
-  color: var(--bio-teal);
+  color: var(--teal);
   font-family: 'JetBrains Mono', monospace;
   margin-top: 8px;
 }
@@ -149,19 +154,15 @@
 
 .reference {
   font-style: italic;
-  color: #71717a;
+  color: var(--text-muted);
   margin-top: 16px !important;
   margin-bottom: 0 !important;
 }
 
-/* Responsive adjustments */
+/* Responsive */
 @media (max-width: 768px) {
-  .homepage {
-    padding: 16px;
-  }
-
   .main-header {
-    font-size: 1.8rem !important;
+    font-size: 1.3rem !important;
   }
 
   .sub-header {

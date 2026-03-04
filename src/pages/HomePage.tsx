@@ -1,126 +1,89 @@
 import React from 'react';
 import { Card, Row, Col, Table, Alert, Statistic, Divider, Typography } from 'antd';
+import { useLanguage } from '../i18n';
 import './HomePage.css';
 
 const { Title, Paragraph, Text } = Typography;
 
 export const HomePage: React.FC = () => {
+  const { t, tArray, tWorkflow } = useLanguage();
+
   const workflowColumns = [
     {
-      title: 'ขั้นตอน',
+      title: t('home.workflowColumns.step'),
       dataIndex: 'step',
       key: 'step',
       width: 80,
     },
     {
-      title: 'รายละเอียด',
+      title: t('home.workflowColumns.details'),
       dataIndex: 'details',
       key: 'details',
     },
     {
-      title: 'เครื่องมือ',
+      title: t('home.workflowColumns.tools'),
       dataIndex: 'tools',
       key: 'tools',
       width: 150,
     },
   ];
 
-  const workflowData = [
-    {
-      key: '1',
-      step: '1',
-      details: 'ค้นหาลำดับกรดอะมิโนของโปรตีนเป้าหมาย',
-      tools: 'UniProt',
-    },
-    {
-      key: '2',
-      step: '2',
-      details: 'สร้างโครงสร้างสามมิติของโปรตีน',
-      tools: 'AlphaFold / Swiss-Model',
-    },
-    {
-      key: '3',
-      step: '3',
-      details: 'หาตำแหน่ง Binding Pocket',
-      tools: 'ChimeraX',
-    },
-    {
-      key: '4',
-      step: '4',
-      details: 'คัดเลือกสารโมเลกุลที่ต้องการทดสอบ',
-      tools: 'PubChem / ZINC',
-    },
-    {
-      key: '5',
-      step: '5',
-      details: 'เตรียมข้อมูลสำหรับการ Docking',
-      tools: 'MGLTools',
-    },
-    {
-      key: '6',
-      step: '6',
-      details: 'ทำการจำลองการจับ (Molecular Docking)',
-      tools: 'AutoDock Vina',
-    },
-    {
-      key: '7',
-      step: '7',
-      details: 'วิเคราะห์ค่า Binding Affinity',
-      tools: 'แพลตฟอร์มนี้',
-    },
-    {
-      key: '8',
-      step: '8',
-      details: 'ส่งออกผลลัพธ์',
-      tools: 'CSV / Excel',
-    },
-  ];
+  const workflowData = tWorkflow('home.workflowSteps').map((row, index) => ({
+    key: String(index + 1),
+    step: row.step,
+    details: row.details,
+    tools: row.tools,
+  }));
+
+  const proteinDbItems = tArray('home.proteinDbItems');
+  const drugDbItems = tArray('home.drugDbItems');
+  const simulationItems = tArray('home.simulationItems');
+  const quickStartSteps = tArray('home.quickStartSteps');
 
   return (
     <div className="homepage">
       {/* Main Header */}
       <div className="header-section">
-        <Title level={1} className="main-header main-header-glow">
-          🪼 โปรแกรมวิเคราะห์โครงสร้างโปรตีนในพิษแมงกะพรุนกล่อง
+        <Title level={1} className="main-header">
+          {t('home.title')}
         </Title>
         <Paragraph className="sub-header">
-          โดยใช้ฐานข้อมูลชีวสารสนเทศเพื่อการออกแบบยาต้านพิษในอนาคต
+          {t('home.subtitle')}
         </Paragraph>
       </div>
 
       {/* Feature Cards */}
       <Row gutter={[24, 24]} className="feature-cards">
         <Col xs={24} md={8}>
-          <Card title="🧬 ฐานข้อมูลโปรตีน" size="small">
+          <Card title={t('home.proteinDbTitle')} size="small">
             <ul>
-              <li><strong>12 พิษแมงกะพรุน</strong></li>
-              <li>หลายสายพันธุ์</li>
-              <li>Chironex fleckeri (แมงกะพรุนกล่อง)</li>
-              <li>Nemopilema nomurai (แมงกะพรุนยักษ์)</li>
-              <li>และอื่นๆ...</li>
+              {proteinDbItems.map((item, index) => (
+                <li key={index}>
+                  {index === 0 ? <strong>{item}</strong> : item}
+                </li>
+              ))}
             </ul>
           </Card>
         </Col>
 
         <Col xs={24} md={8}>
-          <Card title="💊 ฐานข้อมูลสารยา" size="small">
+          <Card title={t('home.drugDbTitle')} size="small">
             <ul>
-              <li><strong>25+ สารยาที่มีศักยภาพ</strong></li>
-              <li>ฟลาโวนอยด์</li>
-              <li>สารยับยั้ง MMP</li>
-              <li>ยาต้านอักเสบ</li>
-              <li>สารจากธรรมชาติ</li>
+              {drugDbItems.map((item, index) => (
+                <li key={index}>
+                  {index === 0 ? <strong>{item}</strong> : item}
+                </li>
+              ))}
             </ul>
           </Card>
         </Col>
 
         <Col xs={24} md={8}>
-          <Card title="🔬 การจำลอง" size="small">
+          <Card title={t('home.simulationTitle')} size="small">
             <ul>
-              <li>Molecular Docking</li>
-              <li>Binding Affinity</li>
-              <li>การแสดงผล 3 มิติ</li>
-              <li>ส่งออกรายงาน</li>
+              {simulationItems.map((item, index) => (
+                <li key={index}>{item}</li>
+              ))}
             </ul>
           </Card>
         </Col>
@@ -130,7 +93,7 @@ export const HomePage: React.FC = () => {
 
       {/* Workflow Section */}
       <div className="workflow-section">
-        <Title level={2}>📋 ขั้นตอนการวิจัย</Title>
+        <Title level={2}>{t('home.workflowTitle')}</Title>
 
         <Row gutter={[24, 24]}>
           <Col xs={24} lg={16}>
@@ -145,14 +108,23 @@ export const HomePage: React.FC = () => {
 
           <Col xs={24} lg={8}>
             <Alert
-              message="เริ่มต้นอย่างรวดเร็ว:"
+              message={t('home.quickStart')}
               description={
                 <ol>
-                  <li>ไปที่หน้า <strong>จำลองการทดลอง</strong></li>
-                  <li>เลือกโปรตีนและสารยา</li>
-                  <li>กดปุ่มเริ่มจำลอง</li>
-                  <li>ดูผลลัพธ์</li>
-                  <li>ส่งออกรายงาน</li>
+                  {quickStartSteps.map((step, index) => (
+                    <li key={index}>
+                      {index === 0 ? (
+                        <span dangerouslySetInnerHTML={{
+                          __html: step.replace(
+                            /(จำลองการทดลอง|Simulation)/,
+                            '<strong>$1</strong>'
+                          ),
+                        }} />
+                      ) : (
+                        step
+                      )}
+                    </li>
+                  ))}
                 </ol>
               }
               type="info"
@@ -166,19 +138,19 @@ export const HomePage: React.FC = () => {
 
       {/* Featured Results */}
       <div className="featured-results">
-        <Title level={2}>🏆 ผลการค้นพบที่น่าสนใจ</Title>
+        <Title level={2}>{t('home.featuredTitle')}</Title>
 
         <Row gutter={[24, 24]} align="middle">
           <Col xs={24} md={8}>
             <div className="featured-metric">
               <Statistic
-                title="สารยับยั้งที่ดีที่สุด"
+                title={t('home.bestInhibitor')}
                 value="Silymarin"
                 suffix={
                   <div>
                     <div className="binding-affinity">-9.5 kcal/mol</div>
                     <Text type="secondary" className="target-protein">
-                      ต่อ NnV-Mlp (Metalloproteinase)
+                      {t('home.targetProtein')}
                     </Text>
                   </div>
                 }
@@ -188,12 +160,10 @@ export const HomePage: React.FC = () => {
 
           <Col xs={24} md={16}>
             <Paragraph>
-              <strong>Silymarin</strong> จากต้นมิลค์ทิสเซิล แสดงค่า Binding Affinity ที่ดีเยี่ยม
-              ต่อพิษ metalloproteinase ของแมงกะพรุน สารฟลาโวนอยด์ธรรมชาตินี้
-              ได้รับการยืนยันจากงานวิจัยที่ตีพิมพ์แล้ว
+              {t('home.featuredDescription')}
             </Paragraph>
             <Paragraph className="reference">
-              <em>อ้างอิง: MDPI Int. J. Mol. Sci. 2023, 24(10), 8972</em>
+              <em>{t('home.reference')}</em>
             </Paragraph>
           </Col>
         </Row>

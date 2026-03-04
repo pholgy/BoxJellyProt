@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { Button } from '../components/ui/button';
 import { Alert, AlertDescription } from '../components/ui/alert';
 import { useSimulationStore } from '../stores';
-import { getRatingThai } from '../services/simulation';
+import { useLanguage, getRatingText } from '../i18n';
 
 /**
  * ExportPage Component
@@ -16,11 +16,13 @@ import { getRatingThai } from '../services/simulation';
  * - Data preview
  * - Export format selection
  * - Publication-ready table format
- * - All Thai text preserved exactly from original
+ * - i18n language switching support
+ * - Premium white theme
  */
 
 export const ExportPage: React.FC = () => {
   const { simulationResults } = useSimulationStore();
+  const { t, language } = useLanguage();
 
   // Sort results by binding affinity (exact Streamlit logic)
   const sortedResults = useMemo(() => {
@@ -28,40 +30,64 @@ export const ExportPage: React.FC = () => {
     return [...simulationResults].sort((a, b) => a.binding_affinity - b.binding_affinity);
   }, [simulationResults]);
 
-  // Prepare CSV/Excel export data - exact structure from Streamlit
+  // Prepare CSV/Excel export data with translated headers
   const exportData = useMemo(() => {
     return sortedResults.map((r, index) => ({
-      อันดับ: index + 1,
-      ชื่อสารยา: r.drug.name,
-      รหัส_CID: r.drug.cid,
-      น้ำหนักโมเลกุล: r.drug.molecular_weight,
-      ชื่อโปรตีน: r.protein.name,
-      รหัส_UniProt: r.protein.uniprot_id,
-      สิ่งมีชีวิต: r.protein.organism,
-      Binding_Affinity_kcal_mol: r.binding_affinity,
-      พันธะไฮโดรเจน: r.hydrogen_bonds,
-      Hydrophobic_Contacts: r.hydrophobic_contacts,
-      ระดับ: getRatingThai(r.binding_affinity)
+      rank: index + 1,
+      drugName: r.drug.name,
+      cid: r.drug.cid,
+      molecularWeight: r.drug.molecular_weight,
+      proteinName: r.protein.name,
+      uniprotId: r.protein.uniprot_id,
+      organism: r.protein.organism,
+      bindingAffinity: r.binding_affinity,
+      hBonds: r.hydrogen_bonds,
+      hydrophobicContacts: r.hydrophobic_contacts,
+      rating: getRatingText(r.binding_affinity, language)
     }));
-  }, [sortedResults]);
+  }, [sortedResults, language]);
+
+  // Export data header labels (translated)
+  const exportHeaders = useMemo(() => [
+    t('results.rank'),
+    t('export.drugName'),
+    t('export.cidCode'),
+    t('common.molecularWeight'),
+    t('export.proteinName'),
+    t('export.uniprotCode'),
+    t('common.organism'),
+    'Binding_Affinity_kcal_mol',
+    t('results.hBonds'),
+    'Hydrophobic_Contacts',
+    t('results.rating')
+  ], [t]);
 
   // Prepare publication table data - exact structure from Streamlit (top 10 only)
   const publicationData = useMemo(() => {
     return sortedResults.slice(0, 10).map((r, index) => ({
-      อันดับ: index + 1,
-      สารประกอบ: r.drug.name,
-      เป้าหมาย: r.protein.name.split('(')[0].trim(),
-      สายพันธุ์: r.protein.organism,
-      'ΔG (kcal/mol)': r.binding_affinity,
-      'H-bonds': r.hydrogen_bonds
+      rank: index + 1,
+      compound: r.drug.name,
+      target: r.protein.name.split('(')[0].trim(),
+      species: r.protein.organism,
+      deltaG: r.binding_affinity,
+      hBonds: r.hydrogen_bonds
     }));
   }, [sortedResults]);
+
+  const publicationHeaders = useMemo(() => [
+    t('results.rank'),
+    t('export.compound'),
+    t('export.target'),
+    t('export.species'),
+    '\u0394G (kcal/mol)',
+    'H-bonds'
+  ], [t]);
 
   // Generate CSV content
   const generateCSV = (): string => {
     if (exportData.length === 0) return '';
 
-    const headers = Object.keys(exportData[0]).join(',');
+    const headers = exportHeaders.join(',');
     const rows = exportData.map(row =>
       Object.values(row).map(value => `"${value}"`).join(',')
     ).join('\n');
@@ -82,7 +108,7 @@ export const ExportPage: React.FC = () => {
     return blob;
   };
 
-  // Download CSV - exact functionality from Streamlit
+  // Download CSV - always uses English file names
   const downloadCSV = () => {
     const csv = generateCSV();
     const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
@@ -91,14 +117,14 @@ export const ExportPage: React.FC = () => {
 
     const timestamp = new Date().toISOString().replace(/[:.]/g, '').slice(0, 15);
     link.href = url;
-    link.download = `ผลการจำลอง_${timestamp}.csv`;
+    link.download = `simulation_results_${timestamp}.csv`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
   };
 
-  // Download Excel - exact functionality from Streamlit
+  // Download Excel - always uses English file names
   const downloadExcel = () => {
     const blob = generateExcel();
     const url = URL.createObjectURL(blob);
@@ -106,7 +132,7 @@ export const ExportPage: React.FC = () => {
 
     const timestamp = new Date().toISOString().replace(/[:.]/g, '').slice(0, 15);
     link.href = url;
-    link.download = `รายงานการจำลอง_${timestamp}.xlsx`;
+    link.download = `simulation_report_${timestamp}.xlsx`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -115,11 +141,11 @@ export const ExportPage: React.FC = () => {
 
   if (!simulationResults || simulationResults.length === 0) {
     return (
-      <div className="max-w-[1400px] mx-auto p-6">
-        <h1 className="text-3xl font-bold mb-8 text-center text-zinc-100">📥 ส่งออกผลลัพธ์</h1>
+      <div className="max-w-6xl mx-auto space-y-8">
+        <h1 className="text-2xl font-semibold text-gray-900">{t('export.title')}</h1>
         <Alert>
           <AlertDescription>
-            ยังไม่มีผลลัพธ์ที่จะส่งออก กรุณาทำการจำลองก่อน!
+            {t('export.noResults')}
           </AlertDescription>
         </Alert>
       </div>
@@ -129,72 +155,70 @@ export const ExportPage: React.FC = () => {
   const successfulResults = simulationResults.filter(r => r.is_successful);
 
   // Helper to determine if a column contains scientific numeric data
-  const isScientificValue = (header: string, value: unknown): boolean => {
-    const scientificHeaders = [
-      'น้ำหนักโมเลกุล',
-      'Binding_Affinity_kcal_mol',
-      'พันธะไฮโดรเจน',
-      'Hydrophobic_Contacts',
-      'ΔG (kcal/mol)',
-      'H-bonds'
-    ];
-    return scientificHeaders.includes(header) && typeof value === 'number';
+  const isScientificValue = (headerIndex: number, value: unknown): boolean => {
+    const scientificIndices = [3, 7, 8, 9]; // molecularWeight, bindingAffinity, hBonds, hydrophobicContacts
+    return scientificIndices.includes(headerIndex) && typeof value === 'number';
+  };
+
+  const isPublicationScientific = (headerIndex: number, value: unknown): boolean => {
+    const scientificIndices = [4, 5]; // deltaG, hBonds
+    return scientificIndices.includes(headerIndex) && typeof value === 'number';
   };
 
   return (
-    <div className="max-w-[1400px] mx-auto p-6">
-      {/* Header - exact Thai text from Streamlit */}
-      <h1 className="text-3xl font-bold mb-8 text-center text-zinc-100">📥 ส่งออกผลลัพธ์</h1>
+    <div className="max-w-6xl mx-auto space-y-8">
+      {/* Header */}
+      <h1 className="text-2xl font-semibold text-gray-900">{t('export.title')}</h1>
 
-      {/* Export options section - exact structure from Streamlit */}
-      <div className="mb-8">
-        <h2 className="text-xl font-bold mb-6 text-zinc-100">ตัวเลือกการส่งออก</h2>
+      {/* Export options section */}
+      <div>
+        <h2 className="text-lg font-semibold mb-4 text-gray-900">{t('export.exportOptions')}</h2>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* CSV Export - exact col1 structure from Streamlit */}
-          <Card className="bio-card">
+          {/* CSV Export */}
+          <Card>
             <CardHeader>
-              <CardTitle>📊 ส่งออก CSV</CardTitle>
+              <CardTitle>{t('export.csvTitle')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <p className="text-sm text-zinc-400">
-                ดาวน์โหลดผลลัพธ์เป็นไฟล์ CSV สำหรับวิเคราะห์ใน Excel หรือเครื่องมืออื่นๆ
+              <p className="text-sm text-gray-500">
+                {t('export.csvDesc')}
               </p>
 
               <Button onClick={downloadCSV} className="w-full">
-                ⬇️ ดาวน์โหลด CSV
+                {t('export.downloadCsv')}
               </Button>
             </CardContent>
           </Card>
 
-          {/* Excel Export - exact col2 structure from Streamlit */}
-          <Card className="bio-card">
+          {/* Excel Export */}
+          <Card>
             <CardHeader>
-              <CardTitle>📑 ส่งออก Excel</CardTitle>
+              <CardTitle>{t('export.excelTitle')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <p className="text-sm text-zinc-400">
-                ดาวน์โหลดรายงาน Excel ที่มีหลายชีต
+              <p className="text-sm text-gray-500">
+                {t('export.excelDesc')}
               </p>
 
               <Button onClick={downloadExcel} className="w-full">
-                ⬇️ ดาวน์โหลด Excel
+                {t('export.downloadExcel')}
               </Button>
             </CardContent>
           </Card>
         </div>
       </div>
 
-      {/* Data preview section - exact structure from Streamlit */}
-      <div className="mb-8">
-        <h2 className="text-xl font-bold mb-4 text-zinc-100">📋 ตัวอย่างข้อมูลที่จะส่งออก</h2>
+      {/* Data preview section */}
+      <div>
+        <h2 className="text-lg font-semibold mb-4 text-gray-900">{t('export.previewTitle')}</h2>
 
-        <div className="overflow-x-auto rounded-lg border border-white/[0.06]">
+        <div className="overflow-x-auto rounded-lg border border-gray-200">
           <table className="w-full border-collapse">
             <thead>
-              <tr className="bg-white/[0.04]">
-                {Object.keys(exportData[0] || {}).map(header => (
-                  <th key={header} className="border-b border-white/[0.08] px-4 py-2 text-left text-sm font-medium text-zinc-300">
+              <tr className="bg-gray-50">
+                {exportHeaders.map(header => (
+                  <th key={header} className="border-b border-gray-200 px-4 py-2 text-left text-sm font-medium text-gray-600">
                     {header}
                   </th>
                 ))}
@@ -202,11 +226,11 @@ export const ExportPage: React.FC = () => {
             </thead>
             <tbody>
               {exportData.slice(0, 20).map((row, index) => ( // Show first 20 rows like Streamlit
-                <tr key={index} className="hover:bg-white/[0.04] border-b border-white/[0.06]">
-                  {Object.entries(row).map(([header, value], cellIndex) => (
+                <tr key={index} className="hover:bg-gray-50 border-b border-gray-200">
+                  {Object.values(row).map((value, cellIndex) => (
                     <td
                       key={cellIndex}
-                      className={`px-4 py-2 text-sm text-zinc-300 ${isScientificValue(header, value) ? 'font-mono' : ''}`}
+                      className={`px-4 py-2 text-sm text-gray-600 ${isScientificValue(cellIndex, value) ? 'font-mono' : ''}`}
                     >
                       {value}
                     </td>
@@ -218,23 +242,23 @@ export const ExportPage: React.FC = () => {
         </div>
 
         {exportData.length > 20 && (
-          <p className="text-sm text-zinc-400 mt-2">
-            แสดง 20 รายการแรก จากทั้งหมด {exportData.length} รายการ
+          <p className="text-sm text-gray-500 mt-2">
+            {t('export.showingRows').replace('{total}', String(exportData.length))}
           </p>
         )}
       </div>
 
-      {/* Publication table section - exact structure from Streamlit */}
-      <div className="mb-8">
-        <h2 className="text-xl font-bold mb-4 text-zinc-100">📝 ตารางสำหรับรายงานวิจัย</h2>
-        <p className="text-zinc-400 mb-4">คัดลอกตารางนี้สำหรับใช้ในรายงานวิจัย:</p>
+      {/* Publication table section */}
+      <div>
+        <h2 className="text-lg font-semibold mb-4 text-gray-900">{t('export.publicationTitle')}</h2>
+        <p className="text-gray-500 mb-4">{t('export.publicationDesc')}</p>
 
-        <div className="overflow-x-auto rounded-lg border border-white/[0.06]">
+        <div className="overflow-x-auto rounded-lg border border-gray-200">
           <table className="w-full border-collapse">
             <thead>
-              <tr className="bg-white/[0.04]">
-                {Object.keys(publicationData[0] || {}).map(header => (
-                  <th key={header} className="border-b border-white/[0.08] px-4 py-2 text-left font-medium text-zinc-300">
+              <tr className="bg-gray-50">
+                {publicationHeaders.map(header => (
+                  <th key={header} className="border-b border-gray-200 px-4 py-2 text-left font-medium text-gray-600">
                     {header}
                   </th>
                 ))}
@@ -242,11 +266,11 @@ export const ExportPage: React.FC = () => {
             </thead>
             <tbody>
               {publicationData.map((row, index) => (
-                <tr key={index} className="hover:bg-white/[0.04] border-b border-white/[0.06]">
-                  {Object.entries(row).map(([header, value], cellIndex) => (
+                <tr key={index} className="hover:bg-gray-50 border-b border-gray-200">
+                  {Object.values(row).map((value, cellIndex) => (
                     <td
                       key={cellIndex}
-                      className={`px-4 py-2 text-zinc-300 ${isScientificValue(header, value) ? 'font-mono' : ''}`}
+                      className={`px-4 py-2 text-gray-600 ${isPublicationScientific(cellIndex, value) ? 'font-mono' : ''}`}
                     >
                       {value}
                     </td>
@@ -260,24 +284,24 @@ export const ExportPage: React.FC = () => {
 
       {/* Summary statistics */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="bio-card">
+        <Card>
           <CardContent className="p-6 text-center">
-            <div className="text-2xl font-bold font-mono text-zinc-100">{exportData.length}</div>
-            <p className="text-sm text-zinc-400">ผลลัพธ์ทั้งหมด</p>
+            <div className="text-2xl font-bold font-mono text-gray-900">{exportData.length}</div>
+            <p className="text-sm text-gray-500">{t('export.totalResults')}</p>
           </CardContent>
         </Card>
-        <Card className="bio-card">
+        <Card>
           <CardContent className="p-6 text-center">
-            <div className="text-2xl font-bold font-mono text-zinc-100">{successfulResults.length}</div>
-            <p className="text-sm text-zinc-400">การจับที่สำเร็จ</p>
+            <div className="text-2xl font-bold font-mono text-gray-900">{successfulResults.length}</div>
+            <p className="text-sm text-gray-500">{t('export.successfulBindings')}</p>
           </CardContent>
         </Card>
-        <Card className="bio-card">
+        <Card>
           <CardContent className="p-6 text-center">
-            <div className="text-2xl font-bold font-mono text-zinc-100">
+            <div className="text-2xl font-bold font-mono text-gray-900">
               {sortedResults[0]?.binding_affinity.toFixed(1) || 'N/A'} kcal/mol
             </div>
-            <p className="text-sm text-zinc-400">Affinity ที่ดีที่สุด</p>
+            <p className="text-sm text-gray-500">{t('results.bestAffinity')}</p>
           </CardContent>
         </Card>
       </div>

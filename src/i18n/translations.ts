@@ -1,0 +1,285 @@
+export type Language = 'th' | 'en';
+
+export const translations = {
+  // Navigation
+  nav: {
+    home: { th: '🏠 หน้าแรก', en: '🏠 Home' },
+    proteins: { th: '🧬 โปรตีนพิษ', en: '🧬 Proteins' },
+    drugs: { th: '💊 สารยา', en: '💊 Drugs' },
+    simulation: { th: '🔬 จำลองการทดลอง', en: '🔬 Simulation' },
+    results: { th: '📊 ผลลัพธ์', en: '📊 Results' },
+    export: { th: '📥 ส่งออกข้อมูล', en: '📥 Export' },
+  },
+
+  // Sidebar
+  sidebar: {
+    mainMenu: { th: 'เมนูหลัก', en: 'Main Menu' },
+    selectPage: { th: 'เลือกหน้า', en: 'Select Page' },
+    proteinCount: { th: 'จำนวนโปรตีน', en: 'Proteins' },
+    drugCount: { th: 'จำนวนสารยา', en: 'Drug Compounds' },
+    footer: { th: 'โปรแกรมวิเคราะห์โปรตีนพิษแมงกะพรุนกล่อง v1.0', en: 'Box Jellyfish Toxin Protein Analyzer v1.0' },
+    copyright: { th: '© 2025 - เพื่อการศึกษาและวิจัย', en: '© 2025 - For Education & Research' },
+    menuFailed: { th: 'เมนูไม่สามารถโหลดได้', en: 'Menu failed to load' },
+    language: { th: 'EN', en: 'TH' },
+  },
+
+  // Common
+  common: {
+    loading: { th: 'กำลังโหลดข้อมูล...', en: 'Loading data...' },
+    all: { th: 'ทั้งหมด', en: 'All' },
+    name: { th: 'ชื่อ', en: 'Name' },
+    category: { th: 'ประเภท', en: 'Category' },
+    source: { th: 'แหล่งที่มา', en: 'Source' },
+    organism: { th: 'สิ่งมีชีวิต', en: 'Organism' },
+    function: { th: 'หน้าที่', en: 'Function' },
+    length: { th: 'ความยาว', en: 'Length' },
+    aminoAcids: { th: 'กรดอะมิโน', en: 'amino acids' },
+    molecularWeight: { th: 'น้ำหนักโมเลกุล', en: 'Molecular Weight' },
+    molecularFormula: { th: 'สูตรโมเลกุล', en: 'Molecular Formula' },
+    noResults: { th: 'ไม่พบผลลัพธ์', en: 'No results found' },
+  },
+
+  // Home Page
+  home: {
+    title: { th: '🪼 โปรแกรมวิเคราะห์โครงสร้างโปรตีนในพิษแมงกะพรุนกล่อง', en: '🪼 Box Jellyfish Toxin Protein Structure Analyzer' },
+    subtitle: { th: 'โดยใช้ฐานข้อมูลชีวสารสนเทศเพื่อการออกแบบยาต้านพิษในอนาคต', en: 'Using bioinformatics databases for future antivenom drug design' },
+    proteinDbTitle: { th: '🧬 ฐานข้อมูลโปรตีน', en: '🧬 Protein Database' },
+    proteinDbItems: {
+      th: ['12 พิษแมงกะพรุน', 'หลายสายพันธุ์', 'Chironex fleckeri (แมงกะพรุนกล่อง)', 'Nemopilema nomurai (แมงกะพรุนยักษ์)', 'และอื่นๆ...'],
+      en: ['12 Jellyfish Toxins', 'Multiple Species', 'Chironex fleckeri (Box Jellyfish)', 'Nemopilema nomurai (Giant Jellyfish)', 'And more...'],
+    },
+    drugDbTitle: { th: '💊 ฐานข้อมูลสารยา', en: '💊 Drug Database' },
+    drugDbItems: {
+      th: ['25+ สารยาที่มีศักยภาพ', 'ฟลาโวนอยด์', 'สารยับยั้ง MMP', 'ยาต้านอักเสบ', 'สารจากธรรมชาติ'],
+      en: ['25+ Potential Compounds', 'Flavonoids', 'MMP Inhibitors', 'Anti-inflammatory Drugs', 'Natural Compounds'],
+    },
+    simulationTitle: { th: '🔬 การจำลอง', en: '🔬 Simulation' },
+    simulationItems: {
+      th: ['Molecular Docking', 'Binding Affinity', 'การแสดงผล 3 มิติ', 'ส่งออกรายงาน'],
+      en: ['Molecular Docking', 'Binding Affinity', '3D Visualization', 'Export Reports'],
+    },
+    workflowTitle: { th: '📋 ขั้นตอนการวิจัย', en: '📋 Research Workflow' },
+    workflowSteps: {
+      th: [
+        { step: '1', details: 'ค้นหาลำดับกรดอะมิโนของโปรตีนเป้าหมาย', tools: 'UniProt' },
+        { step: '2', details: 'สร้างโครงสร้างสามมิติของโปรตีน', tools: 'AlphaFold / Swiss-Model' },
+        { step: '3', details: 'หาตำแหน่ง Binding Pocket', tools: 'ChimeraX' },
+        { step: '4', details: 'คัดเลือกสารโมเลกุลที่ต้องการทดสอบ', tools: 'PubChem / ZINC' },
+        { step: '5', details: 'เตรียมข้อมูลสำหรับการ Docking', tools: 'MGLTools' },
+        { step: '6', details: 'ทำการจำลองการจับ (Molecular Docking)', tools: 'AutoDock Vina' },
+        { step: '7', details: 'วิเคราะห์ค่า Binding Affinity', tools: 'แพลตฟอร์มนี้' },
+        { step: '8', details: 'ส่งออกผลลัพธ์', tools: 'CSV / Excel' },
+      ],
+      en: [
+        { step: '1', details: 'Search amino acid sequences of target proteins', tools: 'UniProt' },
+        { step: '2', details: 'Generate 3D protein structures', tools: 'AlphaFold / Swiss-Model' },
+        { step: '3', details: 'Identify binding pocket locations', tools: 'ChimeraX' },
+        { step: '4', details: 'Select candidate molecules for testing', tools: 'PubChem / ZINC' },
+        { step: '5', details: 'Prepare data for docking', tools: 'MGLTools' },
+        { step: '6', details: 'Perform molecular docking simulation', tools: 'AutoDock Vina' },
+        { step: '7', details: 'Analyze binding affinity values', tools: 'This Platform' },
+        { step: '8', details: 'Export results', tools: 'CSV / Excel' },
+      ],
+    },
+    quickStart: { th: 'เริ่มต้นอย่างรวดเร็ว:', en: 'Quick Start:' },
+    quickStartSteps: {
+      th: ['ไปที่หน้า จำลองการทดลอง', 'เลือกโปรตีนและสารยา', 'กดปุ่มเริ่มจำลอง', 'ดูผลลัพธ์', 'ส่งออกรายงาน'],
+      en: ['Go to Simulation page', 'Select proteins and drugs', 'Click start simulation', 'View results', 'Export reports'],
+    },
+    featuredTitle: { th: '🏆 ผลการค้นพบที่น่าสนใจ', en: '🏆 Featured Findings' },
+    bestInhibitor: { th: 'สารยับยั้งที่ดีที่สุด', en: 'Best Inhibitor' },
+    targetProtein: { th: 'ต่อ NnV-Mlp (Metalloproteinase)', en: 'against NnV-Mlp (Metalloproteinase)' },
+    featuredDescription: {
+      th: 'Silymarin จากต้นมิลค์ทิสเซิล แสดงค่า Binding Affinity ที่ดีเยี่ยมต่อพิษ metalloproteinase ของแมงกะพรุน สารฟลาโวนอยด์ธรรมชาตินี้ได้รับการยืนยันจากงานวิจัยที่ตีพิมพ์แล้ว',
+      en: 'Silymarin from milk thistle shows excellent binding affinity against jellyfish metalloproteinase toxin. This natural flavonoid has been validated by published research.',
+    },
+    reference: { th: 'อ้างอิง: MDPI Int. J. Mol. Sci. 2023, 24(10), 8972', en: 'Reference: MDPI Int. J. Mol. Sci. 2023, 24(10), 8972' },
+    workflowColumns: {
+      step: { th: 'ขั้นตอน', en: 'Step' },
+      details: { th: 'รายละเอียด', en: 'Details' },
+      tools: { th: 'เครื่องมือ', en: 'Tools' },
+    },
+  },
+
+  // Proteins Page
+  proteins: {
+    title: { th: '🧬 ฐานข้อมูลโปรตีนพิษแมงกะพรุน', en: '🧬 Jellyfish Toxin Protein Database' },
+    filterOrganism: { th: 'กรองตามสิ่งมีชีวิต', en: 'Filter by Organism' },
+    filterToxin: { th: 'กรองตามชนิดพิษ', en: 'Filter by Toxin Type' },
+    selectOrganism: { th: 'เลือกสิ่งมีชีวิต', en: 'Select Organism' },
+    selectToxin: { th: 'เลือกชนิดพิษ', en: 'Select Toxin Type' },
+    found: { th: 'พบ', en: 'Found' },
+    proteinsUnit: { th: 'โปรตีน', en: 'proteins' },
+    uniprotId: { th: 'รหัส UniProt', en: 'UniProt ID' },
+    toxinType: { th: 'ชนิดพิษ', en: 'Toxin Type' },
+    showSequence: { th: 'แสดงลำดับกรดอะมิโน', en: 'Show Amino Acid Sequence' },
+    structure3d: { th: 'โครงสร้าง 3 มิติ (จำลอง Alpha Helix):', en: '3D Structure (Simulated Alpha Helix):' },
+    noProteins: { th: 'ไม่พบโปรตีนที่ตรงกับเงื่อนไขการกรอง', en: 'No proteins match the filter criteria' },
+  },
+
+  // Drugs Page
+  drugs: {
+    title: { th: '💊 ฐานข้อมูลสารยาที่มีศักยภาพ', en: '💊 Potential Drug Compound Database' },
+    filterCategory: { th: 'กรองตามประเภท', en: 'Filter by Category' },
+    searchName: { th: 'ค้นหาตามชื่อ', en: 'Search by Name' },
+    selectCategory: { th: 'เลือกประเภท', en: 'Select Category' },
+    searchPlaceholder: { th: 'ป้อนชื่อสารยา...', en: 'Enter drug name...' },
+    pubchemCid: { th: 'รหัส PubChem CID', en: 'PubChem CID' },
+    mechanism: { th: 'กลไกการออกฤทธิ์', en: 'Mechanism of Action' },
+    drugDetails: { th: 'รายละเอียดสารยา', en: 'Drug Details' },
+    selectDrug: { th: 'เลือกสารยาเพื่อดูรายละเอียด', en: 'Select a drug to view details' },
+    selectDrugPlaceholder: { th: 'เลือกสารยา', en: 'Select Drug' },
+    structure3d: { th: 'โครงสร้าง 3 มิติ:', en: '3D Structure:' },
+    noDrugs: { th: 'ไม่พบสารยาที่ตรงกับเงื่อนไขการกรอง', en: 'No drugs match the filter criteria' },
+  },
+
+  // Simulation Page
+  simulation: {
+    title: { th: '🔬 การจำลอง Molecular Docking', en: '🔬 Molecular Docking Simulation' },
+    selectProteins: { th: 'เลือกโปรตีนเป้าหมาย', en: 'Select Target Proteins' },
+    selectDrugs: { th: 'เลือกสารยาที่ต้องการทดสอบ', en: 'Select Drug Compounds' },
+    selectAllProteins: { th: 'เลือกทุกโปรตีน', en: 'Select All Proteins' },
+    selectAllDrugs: { th: 'เลือกทุกสารยา', en: 'Select All Drugs' },
+    selectProtein: { th: 'เลือกโปรตีน', en: 'Select Proteins' },
+    selectDrug: { th: 'เลือกสารยา', en: 'Select Drugs' },
+    selectedProteins: { th: 'เลือกแล้ว: {count} โปรตีน', en: 'Selected: {count} proteins' },
+    selectedDrugs: { th: 'เลือกแล้ว: {count} สารยา', en: 'Selected: {count} drugs' },
+    settings: { th: '⚙️ ตั้งค่าการจำลอง', en: '⚙️ Simulation Settings' },
+    exhaustiveness: { th: 'ความละเอียด (Exhaustiveness)', en: 'Exhaustiveness' },
+    numPoses: { th: 'จำนวน poses', en: 'Number of Poses' },
+    randomSeed: { th: 'Random seed', en: 'Random Seed' },
+    startSimulation: { th: '🚀 เริ่มการจำลอง', en: '🚀 Start Simulation' },
+    simulating: { th: 'กำลังจำลอง {count} การทดลอง...', en: 'Simulating {count} docking experiments...' },
+    errorSelectBoth: { th: 'กรุณาเลือกอย่างน้อย 1 โปรตีน และ 1 สารยา!', en: 'Please select at least 1 protein and 1 drug!' },
+    errorGeneral: { th: 'เกิดข้อผิดพลาดในการจำลอง กรุณาลองใหม่อีกครั้ง', en: 'Simulation error occurred. Please try again.' },
+    complete: { th: '✅ การจำลองเสร็จสิ้น! สร้างผลลัพธ์ {count} รายการ', en: '✅ Simulation complete! Generated {count} results' },
+    previewResults: { th: 'ตัวอย่างผลลัพธ์', en: 'Results Preview' },
+    goToResults: { th: 'ไปที่หน้า ผลลัพธ์ เพื่อดูรายละเอียดเพิ่มเติม!', en: 'Go to Results page for more details!' },
+    drug: { th: 'สารยา', en: 'Drug' },
+    protein: { th: 'โปรตีน', en: 'Protein' },
+    level: { th: 'ระดับ', en: 'Rating' },
+  },
+
+  // Results Page
+  results: {
+    title: { th: '📊 ผลลัพธ์การจำลอง', en: '📊 Simulation Results' },
+    noResults: { th: 'ยังไม่มีผลลัพธ์การจำลอง กรุณาทำการจำลองก่อน!', en: 'No simulation results yet. Please run a simulation first!' },
+    statsSummary: { th: '📈 สรุปสถิติ', en: '📈 Statistics Summary' },
+    totalSimulations: { th: 'จำนวนการจำลองทั้งหมด', en: 'Total Simulations' },
+    successfulBindings: { th: 'การจับที่สำเร็จ', en: 'Successful Bindings' },
+    successRate: { th: 'อัตราความสำเร็จ', en: 'Success Rate' },
+    bestAffinity: { th: 'Affinity ที่ดีที่สุด', en: 'Best Affinity' },
+    tabAll: { th: '📋 ผลลัพธ์ทั้งหมด', en: '📋 All Results' },
+    tabCharts: { th: '📊 กราฟ', en: '📊 Charts' },
+    tabTop10: { th: '🏆 10 อันดับแรก', en: '🏆 Top 10' },
+    tabAnalysis: { th: '🔍 วิเคราะห์', en: '🔍 Analysis' },
+    allResultsTable: { th: 'ตารางผลลัพธ์ทั้งหมด', en: 'All Results Table' },
+    affinityDistribution: { th: 'การกระจายของค่า Binding Affinity', en: 'Binding Affinity Distribution' },
+    resultsByRating: { th: 'ผลลัพธ์แบ่งตามระดับ', en: 'Results by Rating' },
+    heatmap: { th: 'แผนที่ความร้อน Binding Affinity', en: 'Binding Affinity Heatmap' },
+    heatmapDesc: { th: 'แผนที่ความร้อนแสดงความสัมพันธ์ระหว่างโปรตีนและสารยา', en: 'Heatmap showing relationship between proteins and drugs' },
+    top10Title: { th: '🏆 10 อันดับผลลัพธ์ที่ดีที่สุด', en: '🏆 Top 10 Best Results' },
+    deepAnalysis: { th: '🔍 การวิเคราะห์เชิงลึก', en: '🔍 In-depth Analysis' },
+    byProtein: { th: 'ผลลัพธ์แบ่งตามโปรตีน', en: 'Results by Protein' },
+    byDrug: { th: 'ผลลัพธ์แบ่งตามสารยา', en: 'Results by Drug' },
+    bestDrugPerProtein: { th: 'สารยาที่ดีที่สุดสำหรับแต่ละโปรตีน', en: 'Best Drug for Each Protein' },
+    // Table headers
+    rank: { th: 'อันดับ', en: 'Rank' },
+    hBonds: { th: 'พันธะไฮโดรเจน', en: 'H-Bonds' },
+    rating: { th: 'ระดับ', en: 'Rating' },
+    bestAffinityCol: { th: 'Affinity ที่ดีที่สุด', en: 'Best Affinity' },
+    avgAffinity: { th: 'Affinity เฉลี่ย', en: 'Avg. Affinity' },
+    drugsTestedCount: { th: 'จำนวนสารยาที่ทดสอบ', en: 'Drugs Tested' },
+    proteinsTestedCount: { th: 'จำนวนโปรตีนที่ทดสอบ', en: 'Proteins Tested' },
+    dockingResults: { th: 'ผลการ Docking:', en: 'Docking Results:' },
+    formula: { th: 'สูตร', en: 'Formula' },
+    affinity: { th: 'Affinity (kcal/mol)', en: 'Affinity (kcal/mol)' },
+    hydrophobic: { th: 'Hydrophobic', en: 'Hydrophobic' },
+    bindingAffinity: { th: 'Binding Affinity', en: 'Binding Affinity' },
+    hydrophobicContacts: { th: 'Hydrophobic Contacts', en: 'Hydrophobic Contacts' },
+  },
+
+  // Export Page
+  export: {
+    title: { th: '📥 ส่งออกผลลัพธ์', en: '📥 Export Results' },
+    noResults: { th: 'ยังไม่มีผลลัพธ์ที่จะส่งออก กรุณาทำการจำลองก่อน!', en: 'No results to export. Please run a simulation first!' },
+    exportOptions: { th: 'ตัวเลือกการส่งออก', en: 'Export Options' },
+    csvTitle: { th: '📊 ส่งออก CSV', en: '📊 Export CSV' },
+    csvDesc: { th: 'ดาวน์โหลดผลลัพธ์เป็นไฟล์ CSV สำหรับวิเคราะห์ใน Excel หรือเครื่องมืออื่นๆ', en: 'Download results as CSV for analysis in Excel or other tools' },
+    downloadCsv: { th: '⬇️ ดาวน์โหลด CSV', en: '⬇️ Download CSV' },
+    excelTitle: { th: '📑 ส่งออก Excel', en: '📑 Export Excel' },
+    excelDesc: { th: 'ดาวน์โหลดรายงาน Excel ที่มีหลายชีต', en: 'Download multi-sheet Excel report' },
+    downloadExcel: { th: '⬇️ ดาวน์โหลด Excel', en: '⬇️ Download Excel' },
+    previewTitle: { th: '📋 ตัวอย่างข้อมูลที่จะส่งออก', en: '📋 Export Data Preview' },
+    publicationTitle: { th: '📝 ตารางสำหรับรายงานวิจัย', en: '📝 Publication-Ready Table' },
+    publicationDesc: { th: 'คัดลอกตารางนี้สำหรับใช้ในรายงานวิจัย:', en: 'Copy this table for use in research reports:' },
+    showingRows: { th: 'แสดง 20 รายการแรก จากทั้งหมด {total} รายการ', en: 'Showing first 20 of {total} total results' },
+    totalResults: { th: 'ผลลัพธ์ทั้งหมด', en: 'Total Results' },
+    successfulBindings: { th: 'การจับที่สำเร็จ', en: 'Successful Bindings' },
+    // Export data headers
+    drugName: { th: 'ชื่อสารยา', en: 'Drug Name' },
+    cidCode: { th: 'รหัส_CID', en: 'CID' },
+    proteinName: { th: 'ชื่อโปรตีน', en: 'Protein Name' },
+    uniprotCode: { th: 'รหัส_UniProt', en: 'UniProt ID' },
+    compound: { th: 'สารประกอบ', en: 'Compound' },
+    target: { th: 'เป้าหมาย', en: 'Target' },
+    species: { th: 'สายพันธุ์', en: 'Species' },
+  },
+
+  // Ratings
+  ratings: {
+    excellent: { th: 'ดีเยี่ยม', en: 'Excellent' },
+    good: { th: 'ดี', en: 'Good' },
+    moderate: { th: 'ปานกลาง', en: 'Moderate' },
+    weak: { th: 'อ่อน', en: 'Weak' },
+    veryWeak: { th: 'อ่อนมาก', en: 'Very Weak' },
+  },
+
+  // 3D Viewer UI
+  viewer: {
+    style: { th: 'สไตล์', en: 'Style' },
+    color: { th: 'สี', en: 'Color' },
+    spin: { th: 'หมุน', en: 'Spin' },
+    stop: { th: 'หยุด', en: 'Stop' },
+    reset: { th: 'รีเซ็ต', en: 'Reset' },
+    close: { th: 'ปิด', en: 'Close' },
+    loading: { th: 'กำลังโหลดโครงสร้าง...', en: 'Loading structure...' },
+    failed: { th: 'โหลดไม่สำเร็จ', en: 'Failed to load' },
+    whyItMatters: { th: 'ทำไมจึงสำคัญ', en: 'Why it matters' },
+    roleInDrugs: { th: 'บทบาทในยา', en: 'Role in drugs' },
+    atom: { th: 'อะตอม', en: 'Atom' },
+    bonds: { th: 'พันธะ', en: 'bonds' },
+    cartoon: { th: 'ริบบอน', en: 'Cartoon' },
+    surface: { th: 'พื้นผิว', en: 'Surface' },
+    stick: { th: 'แท่ง', en: 'Stick' },
+    line: { th: 'เส้น', en: 'Line' },
+    sphere: { th: 'ทรงกลม', en: 'Sphere' },
+    ballStick: { th: 'บอลแท่ง', en: 'Ball & Stick' },
+    spectrum: { th: 'สเปกตรัม', en: 'Spectrum' },
+    chain: { th: 'สายโซ่', en: 'Chain' },
+    ss: { th: 'SS', en: 'SS' },
+    bfactor: { th: 'B-factor', en: 'B-factor' },
+    jmol: { th: 'Jmol', en: 'Jmol' },
+    rasmol: { th: 'RasMol', en: 'RasMol' },
+    greenC: { th: 'C เขียว', en: 'Green C' },
+    cyanC: { th: 'C ฟ้า', en: 'Cyan C' },
+  },
+
+  // Error Boundary
+  errors: {
+    title: { th: 'เกิดข้อผิดพลาด', en: 'Something went wrong' },
+    description: { th: 'ส่วนนี้ของแอปพลิเคชันเกิดข้อผิดพลาด', en: 'This section of the application encountered an error' },
+    tryAgain: { th: 'ลองใหม่', en: 'Try Again' },
+    details: { th: 'รายละเอียด:', en: 'Details:' },
+    dbError: { th: 'ข้อมูลบางส่วนอาจไม่สามารถโหลดได้ กรุณาลองใหม่', en: 'Some data may not load properly. Please try again.' },
+  },
+} as const;
+
+/** Get rating text in the specified language */
+export function getRatingText(bindingAffinity: number, lang: Language): string {
+  if (bindingAffinity <= -9.0) return translations.ratings.excellent[lang];
+  if (bindingAffinity <= -7.0) return translations.ratings.good[lang];
+  if (bindingAffinity <= -5.0) return translations.ratings.moderate[lang];
+  if (bindingAffinity <= -3.0) return translations.ratings.weak[lang];
+  return translations.ratings.veryWeak[lang];
+}

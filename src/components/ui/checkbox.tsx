@@ -11,31 +11,37 @@ export const Checkbox: React.FC<CheckboxProps> = ({
   onCheckedChange,
   className = '',
   disabled,
+  id,
   ...props
 }) => {
   return (
-    <div className="relative inline-flex items-center">
+    <label
+      htmlFor={id}
+      className={`relative inline-flex items-center ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+    >
       <input
         type="checkbox"
+        id={id}
         checked={checked}
         onChange={(e) => onCheckedChange?.(e.target.checked)}
         disabled={disabled}
-        className="sr-only"
+        className="sr-only peer"
         {...props}
       />
       <div
         className={`
-          w-4 h-4 border border-gray-300 rounded flex items-center justify-center cursor-pointer
-          ${checked ? 'bg-blue-600 border-blue-600' : 'bg-white'}
-          ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:border-blue-500'}
+          w-4 h-4 border border-gray-300 rounded flex items-center justify-center
+          peer-checked:bg-blue-600 peer-checked:border-blue-600
+          peer-focus-visible:ring-2 peer-focus-visible:ring-blue-500 peer-focus-visible:ring-offset-2
+          ${!checked ? 'bg-white' : 'bg-blue-600 border-blue-600'}
+          ${disabled ? 'opacity-50' : 'hover:border-blue-500'}
           ${className}
         `}
-        onClick={() => !disabled && onCheckedChange?.(!checked)}
       >
         {checked && (
           <CheckIcon className="w-3 h-3 text-white" />
         )}
       </div>
-    </div>
+    </label>
   );
 };

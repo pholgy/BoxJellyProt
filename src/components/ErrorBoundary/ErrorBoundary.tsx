@@ -36,23 +36,23 @@ export class ErrorBoundary extends Component<Props, State> {
       }
 
       return (
-        <div className="p-6 bg-bio-900 border border-white/[0.06] rounded-lg">
+        <div className="p-6 bg-gray-50 border border-gray-200 rounded-lg">
           <div className="flex items-center mb-4">
             <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+              <svg className="h-5 w-5 text-red-600" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
               </svg>
             </div>
             <div className="ml-3">
-              <h3 className="text-sm font-medium text-red-400">
+              <h3 className="text-sm font-medium text-red-600">
                 เกิดข้อผิดพลาด
               </h3>
-              <div className="mt-2 text-sm text-zinc-400">
+              <div className="mt-2 text-sm text-gray-600">
                 <p>ส่วนนี้ไม่สามารถแสดงผลได้ขณะนี้ กรุณาลองรีเฟรชหน้าเว็บ</p>
                 {process.env.NODE_ENV === 'development' && this.state.error && (
                   <details className="mt-2">
                     <summary className="cursor-pointer font-medium">รายละเอียดข้อผิดพลาด</summary>
-                    <pre className="mt-2 text-xs bg-bio-900 text-zinc-300 font-mono p-2 rounded overflow-auto">
+                    <pre className="mt-2 text-xs bg-gray-100 text-gray-700 font-mono p-2 rounded overflow-auto">
                       {this.state.error.message}
                       {this.state.error.stack}
                     </pre>
@@ -64,7 +64,7 @@ export class ErrorBoundary extends Component<Props, State> {
           <div className="flex">
             <button
               type="button"
-              className="bg-accent px-3 py-2 rounded-md text-sm font-medium text-bio-800 hover:bg-accent-light transition-colors"
+              className="bg-blue-600 px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-blue-700 transition-colors"
               onClick={() => window.location.reload()}
             >
               รีเฟรชหน้าเว็บ
@@ -83,18 +83,18 @@ export const DatabaseErrorBoundary: React.FC<{ children: ReactNode }> = ({ child
   return (
     <ErrorBoundary
       fallback={
-        <div className="p-4 bg-amber-500/10 border border-amber-500/20 rounded-lg">
+        <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg">
           <div className="flex items-center">
             <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-amber-400" viewBox="0 0 20 20" fill="currentColor">
+              <svg className="h-5 w-5 text-amber-600" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
               </svg>
             </div>
             <div className="ml-3">
-              <h3 className="text-sm font-medium text-amber-400">
+              <h3 className="text-sm font-medium text-amber-600">
                 ไม่สามารถเชื่อมต่อฐานข้อมูลได้
               </h3>
-              <p className="mt-2 text-sm text-zinc-400">
+              <p className="mt-2 text-sm text-gray-600">
                 กรุณาตรวจสอบการเชื่อมต่อและลองใหม่อีกครั้ง
               </p>
             </div>

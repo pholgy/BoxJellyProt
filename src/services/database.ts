@@ -687,3 +687,22 @@ export function getDatabaseStats(): DatabaseStats {
   cache.databaseStats = stats;
   return stats;
 }
+
+// ============================================================================
+// DATABASE SERVICE OBJECT - For component compatibility
+// ============================================================================
+
+/**
+ * DatabaseService object that wraps all database functions
+ * This maintains compatibility with components that expect DatabaseService.methodName()
+ */
+export const DatabaseService = {
+  getAllProteins,
+  getAllDrugs,
+  getProteinsByOrganism,
+  getProteinsByToxinType,
+  getDrugsByCategory,
+  getDatabaseStats,
+  clearCache,
+  getCacheStats
+} as const;

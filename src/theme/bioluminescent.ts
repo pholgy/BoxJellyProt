@@ -1,162 +1,148 @@
 /**
- * Bioluminescent Marine Research Station Theme
+ * Premium White Theme - Box Jellyfish Toxin Analyzer
  *
- * Color philosophy: Deep-sea research facility aesthetic.
- * Dark navy backgrounds with electric blue/teal accents.
- * Glassmorphism panels simulate underwater observation windows.
+ * Clean, polished scientific interface with soft whites,
+ * refined blues, and subtle shadows. No neon, no glow.
  *
- * Designed for the Box Jellyfish Toxin Analysis application.
- * All colors are desaturated to ~70% to avoid AI-cliche neon aesthetics.
+ * Color philosophy: Lab-grade clarity meets editorial elegance.
  */
 
-export const bioColors = {
-  // Base backgrounds - deep navy progression
-  navy: {
-    900: '#0a0f14',
-    800: '#0F1419',
-    700: '#1A2332',
-    600: '#243044',
-    500: '#2e3e56',
+export const themeColors = {
+  // Backgrounds
+  bg: {
+    page: '#F8F9FB',
+    surface: '#FFFFFF',
+    surfaceHover: '#F3F5F7',
+    sidebar: '#FFFFFF',
+    elevated: '#FFFFFF',
+    muted: '#F1F3F5',
+    input: '#FFFFFF',
   },
-  // Primary accent - Electric Blue (desaturated to ~70%)
-  accent: {
-    500: '#00D4FF',
-    400: '#33ddff',
-    300: '#66e5ff',
-    200: '#99eeff',
-    100: '#ccf6ff',
-    glow: 'rgba(0, 212, 255, 0.3)',
-    subtle: 'rgba(0, 212, 255, 0.1)',
-    border: 'rgba(0, 212, 255, 0.2)',
+  // Borders
+  border: {
+    default: '#E2E5EA',
+    subtle: '#EEF0F3',
+    strong: '#D0D4DA',
+    focus: '#2563EB',
   },
-  // Secondary accent - Teal
-  teal: {
-    500: '#4ECDC4',
-    400: '#71d7d0',
-    300: '#94e1dc',
-    glow: 'rgba(78, 205, 196, 0.3)',
-    subtle: 'rgba(78, 205, 196, 0.1)',
-  },
-  // Text hierarchy
+  // Text
   text: {
-    primary: '#f4f4f5',    // zinc-100
-    secondary: '#a1a1aa',  // zinc-400
-    muted: '#71717a',      // zinc-500
-    accent: '#00D4FF',
+    primary: '#111827',
+    secondary: '#4B5563',
+    muted: '#9CA3AF',
+    accent: '#2563EB',
+    inverse: '#FFFFFF',
   },
-  // Semantic colors
-  success: '#4ECDC4',
-  warning: '#f59e0b',
-  error: '#ef4444',
-  // Glassmorphism values
-  glass: {
-    bg: 'rgba(15, 20, 25, 0.8)',
-    bgLight: 'rgba(26, 35, 50, 0.6)',
-    border: 'rgba(255, 255, 255, 0.1)',
-    innerShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+  // Accent - refined blue
+  accent: {
+    600: '#2563EB',
+    500: '#3B82F6',
+    400: '#60A5FA',
+    100: '#DBEAFE',
+    50: '#EFF6FF',
+    bg: 'rgba(37, 99, 235, 0.06)',
+    border: 'rgba(37, 99, 235, 0.15)',
   },
-  // Rating colors for scientific results (binding affinity etc.)
+  // Teal/Success
+  teal: {
+    600: '#059669',
+    500: '#10B981',
+    100: '#D1FAE5',
+    50: '#ECFDF5',
+  },
+  // Semantic
+  success: '#059669',
+  warning: '#D97706',
+  error: '#DC2626',
+  // Rating colors
   rating: {
-    excellent: '#4ECDC4',
-    good: '#00D4FF',
-    moderate: '#f59e0b',
-    weak: '#f97316',
-    veryWeak: '#ef4444',
+    excellent: '#059669',
+    good: '#2563EB',
+    moderate: '#D97706',
+    weak: '#EA580C',
+    veryWeak: '#DC2626',
+  },
+  // Shadow values
+  shadow: {
+    sm: '0 1px 2px rgba(0, 0, 0, 0.04)',
+    md: '0 2px 8px rgba(0, 0, 0, 0.06)',
+    lg: '0 4px 16px rgba(0, 0, 0, 0.08)',
+    xl: '0 8px 32px rgba(0, 0, 0, 0.1)',
+    sidebar: '1px 0 4px rgba(0, 0, 0, 0.04)',
   },
 } as const;
 
-/** Ant Design v5 theme override configuration */
+/** Ant Design v5 theme override - clean white */
 export const antdBioTheme = {
   token: {
-    colorPrimary: bioColors.accent[500],
-    colorBgContainer: bioColors.navy[700],
-    colorBgElevated: bioColors.navy[600],
-    colorBgLayout: bioColors.navy[800],
-    colorText: bioColors.text.primary,
-    colorTextSecondary: bioColors.text.secondary,
-    colorBorder: bioColors.glass.border,
-    colorBorderSecondary: 'rgba(255, 255, 255, 0.05)',
-    borderRadius: 12,
-    fontFamily: "'Geist', 'Noto Sans Thai', system-ui, sans-serif",
-    colorLink: bioColors.accent[500],
-    colorSuccess: bioColors.success,
-    colorWarning: bioColors.warning,
-    colorError: bioColors.error,
-    colorBgBase: bioColors.navy[800],
-    colorTextBase: bioColors.text.primary,
+    colorPrimary: themeColors.accent[600],
+    colorBgContainer: themeColors.bg.surface,
+    colorBgElevated: themeColors.bg.elevated,
+    colorBgLayout: themeColors.bg.page,
+    colorText: themeColors.text.primary,
+    colorTextSecondary: themeColors.text.secondary,
+    colorBorder: themeColors.border.default,
+    colorBorderSecondary: themeColors.border.subtle,
+    borderRadius: 10,
+    fontFamily: "'Geist', 'Noto Sans Thai', system-ui, -apple-system, sans-serif",
+    colorLink: themeColors.accent[600],
+    colorSuccess: themeColors.success,
+    colorWarning: themeColors.warning,
+    colorError: themeColors.error,
+    colorBgBase: themeColors.bg.page,
+    colorTextBase: themeColors.text.primary,
   },
   components: {
     Table: {
-      colorBgContainer: 'rgba(15, 20, 25, 0.4)',
-      headerBg: 'rgba(0, 212, 255, 0.08)',
-      headerColor: bioColors.text.primary,
-      rowHoverBg: 'rgba(0, 212, 255, 0.05)',
-      borderColor: 'rgba(255, 255, 255, 0.06)',
-      colorText: bioColors.text.primary,
+      colorBgContainer: themeColors.bg.surface,
+      headerBg: themeColors.bg.muted,
+      headerColor: themeColors.text.primary,
+      rowHoverBg: themeColors.bg.surfaceHover,
+      borderColor: themeColors.border.subtle,
+      colorText: themeColors.text.primary,
     },
     Card: {
-      colorBgContainer: bioColors.glass.bg,
-      colorBorderSecondary: bioColors.glass.border,
+      colorBgContainer: themeColors.bg.surface,
+      colorBorderSecondary: themeColors.border.subtle,
     },
     Select: {
-      colorBgContainer: bioColors.navy[700],
-      colorBgElevated: bioColors.navy[600],
-      optionSelectedBg: 'rgba(0, 212, 255, 0.15)',
+      colorBgContainer: themeColors.bg.input,
+      colorBgElevated: themeColors.bg.surface,
+      optionSelectedBg: themeColors.accent[50],
     },
     Button: {
-      borderRadius: 12,
+      borderRadius: 10,
     },
     Alert: {
-      colorInfoBg: 'rgba(0, 212, 255, 0.08)',
-      colorInfoBorder: bioColors.accent.border,
+      colorInfoBg: themeColors.accent[50],
+      colorInfoBorder: themeColors.accent.border,
     },
     Tabs: {
       colorBgContainer: 'transparent',
-      itemSelectedColor: bioColors.accent[500],
-      inkBarColor: bioColors.accent[500],
+      itemSelectedColor: themeColors.accent[600],
+      inkBarColor: themeColors.accent[600],
     },
     Statistic: {
-      colorTextDescription: bioColors.text.secondary,
+      colorTextDescription: themeColors.text.secondary,
     },
     Divider: {
-      colorSplit: 'rgba(255, 255, 255, 0.08)',
+      colorSplit: themeColors.border.subtle,
     },
     Input: {
-      colorBgContainer: bioColors.navy[700],
-      activeBorderColor: bioColors.accent[500],
+      colorBgContainer: themeColors.bg.input,
+      activeBorderColor: themeColors.accent[600],
     },
     Slider: {
-      trackBg: bioColors.accent[500],
-      trackHoverBg: bioColors.accent[400],
-      handleColor: bioColors.accent[500],
-      railBg: 'rgba(255, 255, 255, 0.1)',
+      trackBg: themeColors.accent[600],
+      trackHoverBg: themeColors.accent[500],
+      handleColor: themeColors.accent[600],
+      railBg: themeColors.border.default,
     },
     Progress: {
-      defaultColor: bioColors.accent[500],
+      defaultColor: themeColors.accent[600],
     },
     Checkbox: {
-      colorPrimary: bioColors.accent[500],
+      colorPrimary: themeColors.accent[600],
     },
   },
 } as const;
-
-/** CSS custom properties for injection into :root or scoped containers */
-export const cssCustomProperties: Record<string, string> = {
-  '--bio-navy-900': bioColors.navy[900],
-  '--bio-navy-800': bioColors.navy[800],
-  '--bio-navy-700': bioColors.navy[700],
-  '--bio-navy-600': bioColors.navy[600],
-  '--bio-navy-500': bioColors.navy[500],
-  '--bio-accent': bioColors.accent[500],
-  '--bio-accent-glow': bioColors.accent.glow,
-  '--bio-accent-subtle': bioColors.accent.subtle,
-  '--bio-accent-border': bioColors.accent.border,
-  '--bio-teal': bioColors.teal[500],
-  '--bio-teal-glow': bioColors.teal.glow,
-  '--bio-teal-subtle': bioColors.teal.subtle,
-  '--bio-text-primary': bioColors.text.primary,
-  '--bio-text-secondary': bioColors.text.secondary,
-  '--bio-text-muted': bioColors.text.muted,
-  '--bio-glass-bg': bioColors.glass.bg,
-  '--bio-glass-border': bioColors.glass.border,
-};

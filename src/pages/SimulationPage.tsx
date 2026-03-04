@@ -8,7 +8,8 @@ import { Progress } from '../components/ui/progress';
 import { Badge } from '../components/ui/badge';
 import { Alert, AlertDescription } from '../components/ui/alert';
 import { useDatabaseStore, useSimulationStore } from '../stores';
-import { runBatchDockingSimulation, getRatingThai } from '../services/simulation';
+import { runBatchDockingSimulation } from '../services/simulation';
+import { useLanguage, getRatingText } from '../i18n';
 
 /**
  * SimulationPage Component
@@ -22,7 +23,8 @@ import { runBatchDockingSimulation, getRatingThai } from '../services/simulation
  * - Progress tracking during simulation execution
  * - Results preview with top 5 best results
  * - Integration with simulation engine from Task 4
- * - All Thai text preserved exactly from original
+ * - i18n language switching support
+ * - Premium white theme
  */
 
 export const SimulationPage: React.FC = () => {
@@ -34,6 +36,7 @@ export const SimulationPage: React.FC = () => {
     setSelectedDrugs,
     setSimulationResults
   } = useSimulationStore();
+  const { t, language } = useLanguage();
 
   // Simulation parameters (exact default values from Streamlit)
   const [exhaustiveness, setExhaustiveness] = useState<number>(8);
@@ -92,9 +95,9 @@ export const SimulationPage: React.FC = () => {
 
   // Run simulation (exact logic from Streamlit)
   const runSimulation = async () => {
-    // Validation - exact error message from Streamlit
+    // Validation
     if (selectedProteins.length === 0 || selectedDrugs.length === 0) {
-      setSimulationError('กรุณาเลือกอย่างน้อย 1 โปรตีน และ 1 สารยา!');
+      setSimulationError(t('simulation.errorSelectBoth'));
       return;
     }
 
@@ -136,10 +139,10 @@ export const SimulationPage: React.FC = () => {
       const top5 = sortedResults.slice(0, 5);
 
       const preview = top5.map(r => ({
-        สารยา: r.drug.name,
-        โปรตีน: r.protein.name.length > 30 ? r.protein.name.substring(0, 30) + '...' : r.protein.name,
-        'Binding Affinity': `${r.binding_affinity} kcal/mol`,
-        ระดับ: getRatingThai(r.binding_affinity)
+        drug: r.drug.name,
+        protein: r.protein.name.length > 30 ? r.protein.name.substring(0, 30) + '...' : r.protein.name,
+        affinity: `${r.binding_affinity} kcal/mol`,
+        rating: getRatingText(r.binding_affinity, language)
       }));
 
       setPreviewResults(preview);
@@ -147,7 +150,7 @@ export const SimulationPage: React.FC = () => {
 
     } catch (error) {
       console.error('Simulation error:', error);
-      setSimulationError('เกิดข้อผิดพลาดในการจำลอง กรุณาลองใหม่อีกครั้ง');
+      setSimulationError(t('simulation.errorGeneral'));
     } finally {
       setIsSimulating(false);
     }
@@ -155,26 +158,26 @@ export const SimulationPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="max-w-[1400px] mx-auto p-6">
+      <div className="max-w-6xl mx-auto">
         <div className="text-center">
-          <p className="text-lg text-zinc-300">กำลังโหลดข้อมูล...</p>
+          <p className="text-lg text-gray-600">{t('common.loading')}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-[1400px] mx-auto p-6">
-      {/* Header - exact Thai text from Streamlit */}
-      <h1 className="text-3xl font-bold mb-8 text-center text-zinc-100">🔬 การจำลอง Molecular Docking</h1>
+    <div className="max-w-6xl mx-auto space-y-8">
+      {/* Header */}
+      <h1 className="text-2xl font-semibold text-gray-900">{t('simulation.title')}</h1>
 
-      {/* Selection sections - exact col1, col2 layout from Streamlit */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        {/* Protein selection - exact structure from Streamlit */}
+      {/* Selection sections */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Protein selection */}
         <div className="glass-panel p-0">
           <Card className="bg-transparent border-0">
             <CardHeader>
-              <CardTitle className="text-zinc-100">เลือกโปรตีนเป้าหมาย</CardTitle>
+              <CardTitle className="text-gray-900">{t('simulation.selectProteins')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center space-x-2">
@@ -183,13 +186,13 @@ export const SimulationPage: React.FC = () => {
                   checked={selectAllProteins}
                   onCheckedChange={handleSelectAllProteins}
                 />
-                <Label htmlFor="select-all-proteins" className="text-zinc-300">เลือกทุกโปรตีน</Label>
+                <Label htmlFor="select-all-proteins" className="text-gray-600">{t('simulation.selectAllProteins')}</Label>
               </div>
 
               {!selectAllProteins && (
                 <div className="space-y-2">
-                  <Label htmlFor="protein-multiselect" className="text-zinc-300">เลือกโปรตีน</Label>
-                  <div className="border border-white/[0.08] rounded-md p-3 max-h-40 overflow-y-auto bio-scrollbar">
+                  <Label htmlFor="protein-multiselect" className="text-gray-600">{t('simulation.selectProtein')}</Label>
+                  <div className="border border-gray-200 rounded-md p-3 max-h-40 overflow-y-auto bio-scrollbar">
                     {proteins.map((protein) => (
                       <div key={protein.uniprot_id} className="flex items-center space-x-2 py-1">
                         <Checkbox
@@ -203,7 +206,7 @@ export const SimulationPage: React.FC = () => {
                             }
                           }}
                         />
-                        <Label htmlFor={`protein-${protein.uniprot_id}`} className="text-sm text-zinc-400">
+                        <Label htmlFor={`protein-${protein.uniprot_id}`} className="text-sm text-gray-500">
                           {protein.name}
                         </Label>
                       </div>
@@ -213,17 +216,17 @@ export const SimulationPage: React.FC = () => {
               )}
 
               <Badge variant="secondary">
-                เลือกแล้ว: {selectedProteins.length} โปรตีน
+                {t('simulation.selectedProteins').replace('{count}', String(selectedProteins.length))}
               </Badge>
             </CardContent>
           </Card>
         </div>
 
-        {/* Drug selection - exact structure from Streamlit */}
+        {/* Drug selection */}
         <div className="glass-panel p-0">
           <Card className="bg-transparent border-0">
             <CardHeader>
-              <CardTitle className="text-zinc-100">เลือกสารยาที่ต้องการทดสอบ</CardTitle>
+              <CardTitle className="text-gray-900">{t('simulation.selectDrugs')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center space-x-2">
@@ -232,13 +235,13 @@ export const SimulationPage: React.FC = () => {
                   checked={selectAllDrugs}
                   onCheckedChange={handleSelectAllDrugs}
                 />
-                <Label htmlFor="select-all-drugs" className="text-zinc-300">เลือกทุกสารยา</Label>
+                <Label htmlFor="select-all-drugs" className="text-gray-600">{t('simulation.selectAllDrugs')}</Label>
               </div>
 
               {!selectAllDrugs && (
                 <div className="space-y-2">
-                  <Label htmlFor="drug-multiselect" className="text-zinc-300">เลือกสารยา</Label>
-                  <div className="border border-white/[0.08] rounded-md p-3 max-h-40 overflow-y-auto bio-scrollbar">
+                  <Label htmlFor="drug-multiselect" className="text-gray-600">{t('simulation.selectDrug')}</Label>
+                  <div className="border border-gray-200 rounded-md p-3 max-h-40 overflow-y-auto bio-scrollbar">
                     {drugs.map((drug) => (
                       <div key={drug.cid} className="flex items-center space-x-2 py-1">
                         <Checkbox
@@ -252,7 +255,7 @@ export const SimulationPage: React.FC = () => {
                             }
                           }}
                         />
-                        <Label htmlFor={`drug-${drug.cid}`} className="text-sm text-zinc-400">
+                        <Label htmlFor={`drug-${drug.cid}`} className="text-sm text-gray-500">
                           {drug.name}
                         </Label>
                       </div>
@@ -262,23 +265,23 @@ export const SimulationPage: React.FC = () => {
               )}
 
               <Badge variant="secondary">
-                เลือกแล้ว: {selectedDrugs.length} สารยา
+                {t('simulation.selectedDrugs').replace('{count}', String(selectedDrugs.length))}
               </Badge>
             </CardContent>
           </Card>
         </div>
       </div>
 
-      {/* Simulation settings - exact col1, col2, col3 layout from Streamlit */}
-      <div className="glass-panel p-0 mb-8">
+      {/* Simulation settings */}
+      <div className="glass-panel p-0">
         <Card className="bg-transparent border-0">
           <CardHeader>
-            <CardTitle className="text-zinc-100">⚙️ ตั้งค่าการจำลอง</CardTitle>
+            <CardTitle className="text-gray-900">{t('simulation.settings')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="space-y-2">
-                <Label htmlFor="exhaustiveness" className="text-zinc-300">ความละเอียด (Exhaustiveness)</Label>
+                <Label htmlFor="exhaustiveness" className="text-gray-600">{t('simulation.exhaustiveness')}</Label>
                 <Input
                   id="exhaustiveness"
                   type="range"
@@ -288,11 +291,11 @@ export const SimulationPage: React.FC = () => {
                   onChange={(e) => setExhaustiveness(Number(e.target.value))}
                   className="w-full"
                 />
-                <p className="text-sm text-zinc-400 text-center font-mono">{exhaustiveness}</p>
+                <p className="text-sm text-gray-500 text-center font-mono">{exhaustiveness}</p>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="num-modes" className="text-zinc-300">จำนวน poses</Label>
+                <Label htmlFor="num-modes" className="text-gray-600">{t('simulation.numPoses')}</Label>
                 <Input
                   id="num-modes"
                   type="range"
@@ -302,11 +305,11 @@ export const SimulationPage: React.FC = () => {
                   onChange={(e) => setNumModes(Number(e.target.value))}
                   className="w-full"
                 />
-                <p className="text-sm text-zinc-400 text-center font-mono">{numModes}</p>
+                <p className="text-sm text-gray-500 text-center font-mono">{numModes}</p>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="random-seed" className="text-zinc-300">Random seed</Label>
+                <Label htmlFor="random-seed" className="text-gray-600">{t('simulation.randomSeed')}</Label>
                 <Input
                   id="random-seed"
                   type="number"
@@ -331,59 +334,59 @@ export const SimulationPage: React.FC = () => {
           </Alert>
         )}
 
-        {/* Simulation button - exact style from Streamlit */}
+        {/* Simulation button */}
         <Button
           onClick={runSimulation}
           disabled={isSimulating}
           size="lg"
           className="w-full bio-button-primary"
         >
-          🚀 เริ่มการจำลอง
+          {t('simulation.startSimulation')}
         </Button>
 
         {/* Progress and status */}
         {isSimulating && (
           <div className="space-y-4">
-            <p className="text-center text-zinc-300">
-              กำลังจำลอง {selectedProteins.length * selectedDrugs.length} การทดลอง...
+            <p className="text-center text-gray-600">
+              {t('simulation.simulating').replace('{count}', String(selectedProteins.length * selectedDrugs.length))}
             </p>
             <Progress value={simulationProgress} className="w-full" />
           </div>
         )}
 
-        {/* Success message and preview - exact structure from Streamlit */}
+        {/* Success message and preview */}
         {simulationComplete && (
           <div className="space-y-6">
             <Alert>
               <AlertDescription>
-                ✅ การจำลองเสร็จสิ้น! สร้างผลลัพธ์ {selectedProteins.length * selectedDrugs.length} รายการ
+                {t('simulation.complete').replace('{count}', String(selectedProteins.length * selectedDrugs.length))}
               </AlertDescription>
             </Alert>
 
-            {/* Preview results - exact structure from Streamlit */}
+            {/* Preview results */}
             <div className="glass-panel p-0">
               <Card className="bg-transparent border-0">
                 <CardHeader>
-                  <CardTitle className="text-zinc-100">ตัวอย่างผลลัพธ์</CardTitle>
+                  <CardTitle className="text-gray-900">{t('simulation.previewResults')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="overflow-x-auto">
-                    <table className="w-full border-collapse border border-white/[0.08]">
+                    <table className="w-full border-collapse border border-gray-200">
                       <thead>
-                        <tr className="bg-accent/10">
-                          <th className="border border-white/[0.08] px-4 py-2 text-left text-zinc-100">สารยา</th>
-                          <th className="border border-white/[0.08] px-4 py-2 text-left text-zinc-100">โปรตีน</th>
-                          <th className="border border-white/[0.08] px-4 py-2 text-left text-zinc-100">Binding Affinity</th>
-                          <th className="border border-white/[0.08] px-4 py-2 text-left text-zinc-100">ระดับ</th>
+                        <tr className="bg-blue-50">
+                          <th className="border border-gray-200 px-4 py-2 text-left text-gray-900">{t('simulation.drug')}</th>
+                          <th className="border border-gray-200 px-4 py-2 text-left text-gray-900">{t('simulation.protein')}</th>
+                          <th className="border border-gray-200 px-4 py-2 text-left text-gray-900">{t('results.bindingAffinity')}</th>
+                          <th className="border border-gray-200 px-4 py-2 text-left text-gray-900">{t('simulation.level')}</th>
                         </tr>
                       </thead>
                       <tbody>
                         {previewResults.map((result, index) => (
-                          <tr key={index} className="hover:bg-white/[0.04]">
-                            <td className="border border-white/[0.06] px-4 py-2 text-zinc-300">{result.สารยา}</td>
-                            <td className="border border-white/[0.06] px-4 py-2 text-zinc-300">{result.โปรตีน}</td>
-                            <td className="border border-white/[0.06] px-4 py-2 text-zinc-300 font-mono">{result['Binding Affinity']}</td>
-                            <td className="border border-white/[0.06] px-4 py-2 text-zinc-300">{result.ระดับ}</td>
+                          <tr key={index} className="hover:bg-gray-50">
+                            <td className="border border-gray-200 px-4 py-2 text-gray-600">{result.drug}</td>
+                            <td className="border border-gray-200 px-4 py-2 text-gray-600">{result.protein}</td>
+                            <td className="border border-gray-200 px-4 py-2 text-gray-600 font-mono">{result.affinity}</td>
+                            <td className="border border-gray-200 px-4 py-2 text-gray-600">{result.rating}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -392,7 +395,7 @@ export const SimulationPage: React.FC = () => {
 
                   <div className="mt-4">
                     <Badge variant="secondary">
-                      ไปที่หน้า **ผลลัพธ์** เพื่อดูรายละเอียดเพิ่มเติม!
+                      {t('simulation.goToResults')}
                     </Badge>
                   </div>
                 </CardContent>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Sidebar } from './Sidebar';
 import { DatabaseService } from '../../services/database';
 import { ErrorBoundary } from '../ErrorBoundary';
+import { useLanguage } from '../../i18n';
 
 export interface AppLayoutProps {
   children: React.ReactNode;
@@ -11,10 +12,17 @@ export interface AppLayoutProps {
 
 export const AppLayout: React.FC<AppLayoutProps> = ({
   children,
-  currentPage = '🏠 หน้าแรก',
+  currentPage,
   onPageChange
 }) => {
-  const [page, setPage] = useState(currentPage);
+  const { t } = useLanguage();
+  const [page, setPage] = useState(currentPage || t('nav.home'));
+
+  useEffect(() => {
+    if (currentPage) {
+      setPage(currentPage);
+    }
+  }, [currentPage]);
 
   useEffect(() => {
     const initDatabase = async () => {
@@ -45,8 +53,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
         <ErrorBoundary
           fallback={
             <div className="w-72 min-h-[100dvh] bio-sidebar flex items-center justify-center">
-              <div className="text-center text-zinc-400">
-                <p>เมนูไม่สามารถโหลดได้</p>
+              <div className="text-center text-gray-500">
+                <p>{t('sidebar.menuFailed')}</p>
               </div>
             </div>
           }
@@ -60,7 +68,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
         {/* Main Content Area */}
         <main className="flex-1 overflow-auto bio-scrollbar">
           <ErrorBoundary>
-            <div className="min-h-full">
+            <div className="min-h-full px-6 py-8 lg:px-10">
               {children}
             </div>
           </ErrorBoundary>

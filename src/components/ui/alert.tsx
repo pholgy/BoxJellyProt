@@ -18,6 +18,7 @@ export const Alert: React.FC<AlertProps> = ({
 
   return (
     <div
+      role={variant === 'destructive' ? 'alert' : 'status'}
       className={`relative w-full rounded-lg border p-4 ${variants[variant]} ${className}`}
       {...props}
     >

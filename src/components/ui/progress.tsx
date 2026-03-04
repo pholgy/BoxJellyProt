@@ -14,7 +14,14 @@ export const Progress: React.FC<ProgressProps> = ({
   const percentage = Math.min(Math.max((value / max) * 100, 0), 100);
 
   return (
-    <div className={`w-full bg-gray-200 rounded-full h-2.5 ${className}`}>
+    <div
+      role="progressbar"
+      aria-valuenow={value}
+      aria-valuemin={0}
+      aria-valuemax={max}
+      aria-label="Progress"
+      className={`w-full bg-gray-200 rounded-full h-2.5 ${className}`}
+    >
       <div
         className="bg-blue-600 h-2.5 rounded-full transition-all duration-300 ease-out"
         style={{ width: `${percentage}%` }}

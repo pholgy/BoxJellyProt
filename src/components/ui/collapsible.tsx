@@ -58,12 +58,22 @@ export const CollapsibleTrigger: React.FC<CollapsibleTriggerProps> = ({
 }) => {
   if (asChild && React.isValidElement(children)) {
     return React.cloneElement(children as React.ReactElement<any>, {
-      onClick: () => onOpenChange?.(!open)
+      onClick: () => onOpenChange?.(!open),
+      'aria-expanded': open,
+      role: children.props.role || 'button',
+      tabIndex: children.props.tabIndex ?? 0,
+      onKeyDown: (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onOpenChange?.(!open);
+        }
+        children.props.onKeyDown?.(e);
+      }
     });
   }
 
   return (
-    <button onClick={() => onOpenChange?.(!open)}>
+    <button onClick={() => onOpenChange?.(!open)} aria-expanded={open}>
       {children}
     </button>
   );
