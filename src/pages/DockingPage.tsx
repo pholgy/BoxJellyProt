@@ -148,16 +148,70 @@ export const DockingPage: React.FC = () => {
         const loadPdb = (pdbData: string, isFallback: boolean) => {
           if (cancelled) return;
 
-          viewer.addModel(pdbData, 'pdb');
+          const model = viewer.addModel(pdbData, 'pdb');
 
           // Base style: cartoon spectrum
           viewer.setStyle({}, { cartoon: { color: 'spectrum', opacity: 0.9 } });
 
-          // Highlight pocket residues in red with sticks
+          // Get pocket residue numbers from the simulation
           const pocketResi = pocket.residues
             .map(r => { const m = r.match(/Residue_(\d+)/); return m ? parseInt(m[1]) : null; })
             .filter((n): n is number => n !== null);
 
+          // ── Calculate REAL binding pocket center from actual atom positions ──
+          const allAtoms = model.selectedAtoms({}) as any[];
+          let cx = 0, cy = 0, cz = 0, count = 0;
+
+          if (pocketResi.length > 0 && allAtoms.length > 0) {
+            // Find CA atoms in pocket residues
+            for (const atom of allAtoms) {
+              if (atom.x == null || atom.y == null || atom.z == null) continue;
+              if (pocketResi.includes(atom.resi ?? 0) && atom.atom === 'CA') {
+                cx += atom.x; cy += atom.y; cz += atom.z; count++;
+              }
+            }
+            // Fallback: any atom in pocket residues
+            if (count === 0) {
+              for (const atom of allAtoms) {
+                if (atom.x == null || atom.y == null || atom.z == null) continue;
+                if (pocketResi.includes(atom.resi ?? 0)) {
+                  cx += atom.x; cy += atom.y; cz += atom.z; count++;
+                }
+              }
+            }
+          }
+
+          // If no pocket residues matched, use a region ~40% along the protein chain
+          if (count === 0 && allAtoms.length > 0) {
+            const midIdx = Math.floor(allAtoms.length * 0.4);
+            const regionStart = Math.max(0, midIdx - 20);
+            const regionEnd = Math.min(allAtoms.length, midIdx + 20);
+            for (let i = regionStart; i < regionEnd; i++) {
+              const a = allAtoms[i];
+              if (a?.x == null || a?.y == null || a?.z == null) continue;
+              cx += a.x; cy += a.y; cz += a.z; count++;
+            }
+          }
+
+          const pocketCenter = count > 0
+            ? { x: cx / count, y: cy / count, z: cz / count }
+            : { x: 0, y: 0, z: 0 };
+
+          // Calculate visual radius from spread of pocket atoms
+          let maxDist = 0;
+          if (count > 0) {
+            for (const atom of allAtoms) {
+              if (atom.x == null || atom.y == null || atom.z == null) continue;
+              if (pocketResi.includes(atom.resi ?? 0)) {
+                const dx = atom.x - pocketCenter.x, dy = atom.y - pocketCenter.y, dz = atom.z - pocketCenter.z;
+                const d = Math.sqrt(dx * dx + dy * dy + dz * dz);
+                if (d > maxDist) maxDist = d;
+              }
+            }
+          }
+          const sphereRadius = Math.max(maxDist + 3, 6);
+
+          // Highlight pocket residues in red with sticks
           if (pocketResi.length > 0) {
             viewer.setStyle({ resi: pocketResi }, {
               cartoon: { color: '#FF4444', opacity: 1.0 },
@@ -165,38 +219,53 @@ export const DockingPage: React.FC = () => {
             });
           }
 
-          // Binding pocket translucent sphere
+          // Translucent red sphere at REAL pocket location
           viewer.addSphere({
-            center: { x: pocket.center_x, y: pocket.center_y, z: pocket.center_z },
-            radius: pocket.radius * 0.4,
-            color: '#FF4444', opacity: 0.18,
+            center: pocketCenter,
+            radius: sphereRadius,
+            color: '#FF4444', opacity: 0.15,
           } as any);
 
-          // Wireframe pocket outline
+          // Wireframe outline
           viewer.addSphere({
-            center: { x: pocket.center_x, y: pocket.center_y, z: pocket.center_z },
-            radius: pocket.radius * 0.4,
-            color: '#FF6666', opacity: 0.35, wireframe: true,
+            center: pocketCenter,
+            radius: sphereRadius,
+            color: '#FF6666', opacity: 0.3, wireframe: true,
           } as any);
 
           // Label at pocket center
           viewer.addLabel('Binding Pocket', {
-            position: { x: pocket.center_x, y: pocket.center_y, z: pocket.center_z },
+            position: pocketCenter,
             backgroundColor: 'rgba(220, 38, 38, 0.85)', fontColor: 'white', fontSize: 11,
           } as any);
 
-          // H-bond indicator spheres
+          // H-bond indicator spheres around the REAL pocket
           for (let i = 0; i < result.hydrogen_bonds; i++) {
             const ang = (i / result.hydrogen_bonds) * Math.PI * 2;
-            const hr = pocket.radius * 0.25;
+            const hr = sphereRadius * 0.6;
             viewer.addSphere({
               center: {
-                x: pocket.center_x + hr * Math.cos(ang),
-                y: pocket.center_y + hr * Math.sin(ang),
-                z: pocket.center_z + (i - result.hydrogen_bonds / 2) * 1.2,
+                x: pocketCenter.x + hr * Math.cos(ang),
+                y: pocketCenter.y + hr * Math.sin(ang),
+                z: pocketCenter.z + (i - result.hydrogen_bonds / 2) * 1.5,
               },
-              radius: 0.5, color: '#2563EB', opacity: 0.6,
+              radius: 0.6, color: '#2563EB', opacity: 0.6,
             } as any);
+          }
+
+          // Draw dashed interaction lines from pocket center to pocket residue CAs
+          let lineCount = 0;
+          for (const atom of allAtoms) {
+            if (lineCount >= 5) break;
+            if (atom.x == null || atom.y == null || atom.z == null) continue;
+            if (pocketResi.includes(atom.resi ?? 0) && atom.atom === 'CA') {
+              viewer.addCylinder({
+                start: pocketCenter,
+                end: { x: atom.x, y: atom.y, z: atom.z },
+                radius: 0.08, color: '#2563EB', opacity: 0.4, dashed: true,
+              } as any);
+              lineCount++;
+            }
           }
 
           viewer.setClickable({}, true, onAtomClick);
