@@ -7,7 +7,6 @@ import { Badge } from '../components/ui/badge';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../components/ui/collapsible';
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
 import { useDatabaseStore } from '../stores';
-import { Protein } from '../types';
 import { useLanguage } from '../i18n';
 import { ProteinViewer } from '../components/viewers/ProteinViewer';
 

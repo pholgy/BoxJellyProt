@@ -463,7 +463,7 @@ export function getAllProteins(): Protein[] {
 
   const proteins: Protein[] = [];
 
-  for (const [key, data] of Object.entries(JELLYFISH_TOXINS_DATA)) {
+  for (const data of Object.values(JELLYFISH_TOXINS_DATA)) {
     const protein: Protein = {
       uniprot_id: data.uniprot_id,
       name: data.name,

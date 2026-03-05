@@ -79,20 +79,6 @@ export const SimulationPage: React.FC = () => {
     }
   };
 
-  // Handle individual protein selection
-  const handleProteinSelection = (proteinNames: string[]) => {
-    const selected = proteins.filter(p => proteinNames.includes(p.name));
-    setSelectedProteins(selected);
-    setSelectAllProteins(selected.length === proteins.length);
-  };
-
-  // Handle individual drug selection
-  const handleDrugSelection = (drugNames: string[]) => {
-    const selected = drugs.filter(d => drugNames.includes(d.name));
-    setSelectedDrugs(selected);
-    setSelectAllDrugs(selected.length === drugs.length);
-  };
-
   // Run simulation (exact logic from Streamlit)
   const runSimulation = async () => {
     // Validation
@@ -107,8 +93,6 @@ export const SimulationPage: React.FC = () => {
     setSimulationComplete(false);
 
     try {
-      const totalDockings = selectedProteins.length * selectedDrugs.length;
-
       // Simulate progress updates
       const progressInterval = setInterval(() => {
         setSimulationProgress(prev => {

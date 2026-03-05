@@ -7,8 +7,6 @@
 // Import statements - verify modules can be imported
 import { useSimulationStore } from './simulationStore';
 import { useDatabaseStore } from './databaseStore';
-import type { DockingResult, Protein, DrugCandidate } from '../types';
-
 /**
  * Verify Simulation Store Implementation
  */

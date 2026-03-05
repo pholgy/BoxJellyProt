@@ -22,11 +22,9 @@ import { Protein, DrugCandidate, BindingPocket, DockingResult } from '../types';
  * Port from Python's random.seed() functionality
  */
 export class SeededRandom {
-  private seed: number;
   private state: number;
 
   constructor(seed: number) {
-    this.seed = seed;
     this.state = seed;
   }
 
@@ -66,7 +64,6 @@ export class SeededRandom {
    * Reset the generator with new seed
    */
   setSeed(seed: number): void {
-    this.seed = seed;
     this.state = seed;
   }
 }

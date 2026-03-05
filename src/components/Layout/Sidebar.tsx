@@ -19,7 +19,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onNavigate }) => 
   const [isLoading, setIsLoading] = useState(true);
   const { t, toggleLanguage } = useLanguage();
 
-  const navItems = [t('nav.home'), t('nav.proteins'), t('nav.drugs'), t('nav.simulation'), t('nav.results'), t('nav.export')];
+  const navItems = [t('nav.home'), t('nav.proteins'), t('nav.drugs'), t('nav.simulation'), t('nav.results'), t('nav.export'), t('nav.docking')];
 
   useEffect(() => {
     const loadStats = async () => {

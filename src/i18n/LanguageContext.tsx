@@ -1,8 +1,6 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import { Language, translations } from './translations';
 
-type TranslationValue = string | string[] | Record<string, string>[];
-
 interface LanguageContextType {
   language: Language;
   toggleLanguage: () => void;

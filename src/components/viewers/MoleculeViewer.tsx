@@ -12,6 +12,20 @@ interface MoleculeViewerProps {
 type MolStyle = 'ball-stick' | 'stick' | 'sphere' | 'line' | 'surface';
 type ColorScheme = 'jmol' | 'rasmol' | 'greenCarbon' | 'cyanCarbon';
 
+/** Try fetching SDF data from a URL, return null if it fails or isn't valid SDF */
+async function fetchSdf(url: string): Promise<string | null> {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) return null;
+    const text = await response.text();
+    // Valid SDF must contain V2000 or V3000 mol block marker
+    if (text.includes('V2000') || text.includes('V3000')) return text;
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 export const MoleculeViewer: React.FC<MoleculeViewerProps> = ({
   cid,
   smiles,
@@ -104,9 +118,7 @@ export const MoleculeViewer: React.FC<MoleculeViewerProps> = ({
           backgroundColor: 'rgba(0,0,0,0.75)',
           fontColor: 'white',
           fontSize: 12,
-          borderRadius: 4,
-          padding: 4,
-        });
+        } as any);
         viewer.render();
       };
 
@@ -122,9 +134,7 @@ export const MoleculeViewer: React.FC<MoleculeViewerProps> = ({
           backgroundColor: 'rgba(0,0,0,0.6)',
           fontColor: 'white',
           fontSize: 11,
-          borderRadius: 4,
-          padding: 3,
-        });
+        } as any);
         viewer.render();
       };
 
@@ -133,67 +143,68 @@ export const MoleculeViewer: React.FC<MoleculeViewerProps> = ({
         viewer.render();
       };
 
-      const setupInteraction = () => {
+      const loadModel = (data: string, format: string, sourceName: string, isFallback: boolean) => {
+        if (cancelled) return;
+        viewer.addModel(data, format);
         viewer.setClickable({}, true, onAtomClick);
         viewer.setHoverable({}, true, onAtomHover, onAtomUnhover);
+        applyStyle(activeStyle, activeColor);
+        viewer.zoomTo();
+        viewer.rotate(30, 'y');
+        viewer.render();
+        setStatus(isFallback ? 'fallback' : 'loaded');
+        setSource(sourceName);
       };
 
-      // Try PubChem 3D SDF first
-      try {
-        const pubchemUrl = `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${cid}/SDF?record_type=3d`;
-        const response = await fetch(pubchemUrl);
-        if (response.ok) {
-          const sdfData = await response.text();
-          if (sdfData.includes('V2000') || sdfData.includes('V3000')) {
-            if (!cancelled) {
-              viewer.addModel(sdfData, 'sdf');
-              setupInteraction();
-              applyStyle(activeStyle, activeColor);
-              viewer.zoomTo();
-              viewer.rotate(30, 'y');
-              viewer.render();
-              setStatus('loaded');
-              setSource('PubChem 3D');
-              return;
-            }
-          }
-        }
-      } catch {}
+      // Strategy 1: PubChem 3D conformer
+      const sdf3d = await fetchSdf(
+        `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${cid}/SDF?record_type=3d`
+      );
+      if (!cancelled && sdf3d) {
+        loadModel(sdf3d, 'sdf', 'PubChem 3D', false);
+        return;
+      }
 
-      // Try PubChem 2D SDF as fallback
-      try {
-        const pubchem2dUrl = `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${cid}/SDF?record_type=2d`;
-        const response = await fetch(pubchem2dUrl);
-        if (response.ok) {
-          const sdfData = await response.text();
-          if (sdfData.includes('V2000') || sdfData.includes('V3000')) {
-            if (!cancelled) {
-              viewer.addModel(sdfData, 'sdf');
-              setupInteraction();
-              applyStyle(activeStyle, activeColor);
-              viewer.zoomTo();
-              viewer.render();
-              setStatus('loaded');
-              setSource('PubChem 2D');
-              return;
-            }
-          }
-        }
-      } catch {}
+      // Strategy 2: PubChem 2D
+      const sdf2d = await fetchSdf(
+        `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${cid}/SDF?record_type=2d`
+      );
+      if (!cancelled && sdf2d) {
+        loadModel(sdf2d, 'sdf', 'PubChem 2D', false);
+        return;
+      }
 
-      // Final fallback: SMILES
-      if (!cancelled && smiles) {
-        try {
-          viewer.addModel(smiles, 'smi');
-          setupInteraction();
-          applyStyle(activeStyle, activeColor);
-          viewer.zoomTo();
-          viewer.render();
-          setStatus('fallback');
-          setSource('SMILES');
-        } catch {
-          setStatus('error');
+      // Strategy 3: NCI Cactus resolver by drug name (3D)
+      const cactusName = await fetchSdf(
+        `https://cactus.nci.nih.gov/chemical/structure/${encodeURIComponent(drugName)}/sdf?get3d=true`
+      );
+      if (!cancelled && cactusName) {
+        loadModel(cactusName, 'sdf', 'NCI/CADD', false);
+        return;
+      }
+
+      // Strategy 4: NCI Cactus resolver by SMILES (3D)
+      if (smiles) {
+        const cactusSmi = await fetchSdf(
+          `https://cactus.nci.nih.gov/chemical/structure/${encodeURIComponent(smiles)}/sdf?get3d=true`
+        );
+        if (!cancelled && cactusSmi) {
+          loadModel(cactusSmi, 'sdf', 'NCI/CADD', true);
+          return;
         }
+      }
+
+      // Strategy 5: NCI Cactus resolver by drug name (2D fallback)
+      const cactus2d = await fetchSdf(
+        `https://cactus.nci.nih.gov/chemical/structure/${encodeURIComponent(drugName)}/sdf`
+      );
+      if (!cancelled && cactus2d) {
+        loadModel(cactus2d, 'sdf', 'NCI/CADD 2D', true);
+        return;
+      }
+
+      if (!cancelled) {
+        setStatus('error');
       }
     };
 
@@ -207,7 +218,7 @@ export const MoleculeViewer: React.FC<MoleculeViewerProps> = ({
         try { viewerRef.current.clear(); } catch {}
       }
     };
-  }, [cid, smiles]);
+  }, [cid, smiles, drugName]);
 
   const handleStyleChange = (style: MolStyle) => {
     setActiveStyle(style);

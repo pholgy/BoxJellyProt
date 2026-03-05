@@ -9,6 +9,7 @@ export const translations = {
     simulation: { th: '🔬 จำลองการทดลอง', en: '🔬 Simulation' },
     results: { th: '📊 ผลลัพธ์', en: '📊 Results' },
     export: { th: '📥 ส่งออกข้อมูล', en: '📥 Export' },
+    docking: { th: '🔗 จำลองการจับ', en: '🔗 Docking' },
   },
 
   // Sidebar
@@ -224,6 +225,37 @@ export const translations = {
     compound: { th: 'สารประกอบ', en: 'Compound' },
     target: { th: 'เป้าหมาย', en: 'Target' },
     species: { th: 'สายพันธุ์', en: 'Species' },
+  },
+
+  // Docking Page
+  docking: {
+    title: { th: '🔗 จำลองการจับระหว่างยากับโปรตีน', en: '🔗 Drug-Protein Docking Visualization' },
+    subtitle: { th: 'เลือกโปรตีนพิษ 1 ตัว และสารยา 1 ตัว แล้วดูว่ามันจับกันตรงไหน', en: 'Select 1 toxin protein and 1 drug to visualize binding interaction' },
+    selectProtein: { th: 'เลือกโปรตีนพิษ', en: 'Select Toxin Protein' },
+    selectDrug: { th: 'เลือกสารยา', en: 'Select Drug Compound' },
+    proteinPlaceholder: { th: '-- เลือกโปรตีน --', en: '-- Select Protein --' },
+    drugPlaceholder: { th: '-- เลือกสารยา --', en: '-- Select Drug --' },
+    runDocking: { th: '🔗 เริ่มจำลองการจับ', en: '🔗 Run Docking' },
+    running: { th: 'กำลังจำลอง...', en: 'Running simulation...' },
+    proteinStructure: { th: 'โครงสร้างโปรตีน + ตำแหน่งที่จับ', en: 'Protein Structure + Binding Site' },
+    drugStructure: { th: 'โครงสร้างสารยา', en: 'Drug Structure' },
+    bindingResults: { th: 'ผลการจับ', en: 'Binding Results' },
+    bindingAffinity: { th: 'Binding Affinity', en: 'Binding Affinity' },
+    hBonds: { th: 'พันธะไฮโดรเจน', en: 'Hydrogen Bonds' },
+    hydrophobic: { th: 'Hydrophobic Contacts', en: 'Hydrophobic Contacts' },
+    pocketId: { th: 'Binding Pocket', en: 'Binding Pocket' },
+    pocketRadius: { th: 'รัศมี Pocket', en: 'Pocket Radius' },
+    druggability: { th: 'Druggability Score', en: 'Druggability Score' },
+    bindingSiteResidues: { th: 'กรดอะมิโนบริเวณที่จับ', en: 'Binding Site Residues' },
+    successful: { th: 'จับสำเร็จ', en: 'Successful Binding' },
+    unsuccessful: { th: 'จับไม่สำเร็จ', en: 'Unsuccessful Binding' },
+    interactionDetails: { th: 'รายละเอียดปฏิสัมพันธ์', en: 'Interaction Details' },
+    pocketLocation: { th: 'ตำแหน่ง Pocket (x, y, z)', en: 'Pocket Location (x, y, z)' },
+    proteinInfo: { th: 'ข้อมูลโปรตีน', en: 'Protein Info' },
+    drugInfo: { th: 'ข้อมูลสารยา', en: 'Drug Info' },
+    tryAnother: { th: 'ลองคู่อื่น', en: 'Try Another Pair' },
+    bindingPocketLabel: { th: 'Binding Pocket (บริเวณสีแดง)', en: 'Binding Pocket (red region)' },
+    selectBothFirst: { th: 'กรุณาเลือกทั้งโปรตีนและสารยา', en: 'Please select both a protein and a drug' },
   },
 
   // Ratings

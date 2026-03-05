@@ -1,10 +1,8 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { useDatabaseStore } from '../stores';
-import { DrugCandidate } from '../types';
 import { useLanguage } from '../i18n';
 import { MoleculeViewer } from '../components/viewers/MoleculeViewer';
 

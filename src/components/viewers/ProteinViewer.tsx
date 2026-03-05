@@ -212,9 +212,7 @@ export const ProteinViewer: React.FC<ProteinViewerProps> = ({
           backgroundColor: 'rgba(0,0,0,0.75)',
           fontColor: 'white',
           fontSize: 12,
-          borderRadius: 4,
-          padding: 4,
-        });
+        } as any);
         viewer.render();
       };
 
@@ -231,9 +229,7 @@ export const ProteinViewer: React.FC<ProteinViewerProps> = ({
           backgroundColor: 'rgba(0,0,0,0.6)',
           fontColor: 'white',
           fontSize: 11,
-          borderRadius: 4,
-          padding: 3,
-        });
+        } as any);
         viewer.render();
       };
 
