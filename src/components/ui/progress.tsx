@@ -4,12 +4,14 @@ export interface ProgressProps {
   value: number;
   max?: number;
   className?: string;
+  'aria-label'?: string;
 }
 
 export const Progress: React.FC<ProgressProps> = ({
   value,
   max = 100,
-  className = ''
+  className = '',
+  'aria-label': ariaLabel,
 }) => {
   const percentage = Math.min(Math.max((value / max) * 100, 0), 100);
 
@@ -19,7 +21,7 @@ export const Progress: React.FC<ProgressProps> = ({
       aria-valuenow={value}
       aria-valuemin={0}
       aria-valuemax={max}
-      aria-label="Progress"
+      aria-label={ariaLabel || `Progress: ${Math.round(percentage)}%`}
       className={`w-full bg-gray-200 rounded-full h-2.5 ${className}`}
     >
       <div

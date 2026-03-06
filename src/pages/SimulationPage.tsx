@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Checkbox } from '../components/ui/checkbox';
 import { Label } from '../components/ui/label';
@@ -143,7 +144,7 @@ export const SimulationPage: React.FC = () => {
   if (isLoading) {
     return (
       <div className="max-w-6xl mx-auto">
-        <div className="text-center">
+        <div className="text-center" role="status" aria-live="polite">
           <p className="text-lg text-gray-600">{t('common.loading')}</p>
         </div>
       </div>
@@ -153,15 +154,29 @@ export const SimulationPage: React.FC = () => {
   return (
     <div className="max-w-6xl mx-auto space-y-8">
       {/* Header */}
-      <h1 className="text-2xl font-semibold text-gray-900">{t('simulation.title')}</h1>
+      <h1 className="text-2xl font-semibold text-gray-900 flex items-center gap-2">
+        <motion.span
+          animate={{ y: [0, -3, 0], rotate: [0, 5, -5, 0] }}
+          transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+          className="inline-block"
+        >
+          {'⚗️'}
+        </motion.span>
+        {t('simulation.title')}
+      </h1>
 
       {/* Selection sections */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Protein selection */}
-        <div className="glass-panel p-0">
+        <motion.div
+          className="glass-panel p-0"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.1 }}
+        >
           <Card className="bg-transparent border-0">
             <CardHeader>
-              <CardTitle className="text-gray-900">{t('simulation.selectProteins')}</CardTitle>
+              <CardTitle as="h2" className="text-gray-900">{t('simulation.selectProteins')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center space-x-2">
@@ -175,8 +190,8 @@ export const SimulationPage: React.FC = () => {
 
               {!selectAllProteins && (
                 <div className="space-y-2">
-                  <Label htmlFor="protein-multiselect" className="text-gray-600">{t('simulation.selectProtein')}</Label>
-                  <div className="border border-gray-200 rounded-md p-3 max-h-40 overflow-y-auto bio-scrollbar">
+                  <Label id="protein-multiselect-label" className="text-gray-600">{t('simulation.selectProtein')}</Label>
+                  <div className="border border-gray-200 rounded-md p-3 max-h-40 overflow-y-auto bio-scrollbar" role="group" aria-labelledby="protein-multiselect-label">
                     {proteins.map((protein) => (
                       <div key={protein.uniprot_id} className="flex items-center space-x-2 py-1">
                         <Checkbox
@@ -204,13 +219,18 @@ export const SimulationPage: React.FC = () => {
               </Badge>
             </CardContent>
           </Card>
-        </div>
+        </motion.div>
 
         {/* Drug selection */}
-        <div className="glass-panel p-0">
+        <motion.div
+          className="glass-panel p-0"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.2 }}
+        >
           <Card className="bg-transparent border-0">
             <CardHeader>
-              <CardTitle className="text-gray-900">{t('simulation.selectDrugs')}</CardTitle>
+              <CardTitle as="h2" className="text-gray-900">{t('simulation.selectDrugs')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center space-x-2">
@@ -224,8 +244,8 @@ export const SimulationPage: React.FC = () => {
 
               {!selectAllDrugs && (
                 <div className="space-y-2">
-                  <Label htmlFor="drug-multiselect" className="text-gray-600">{t('simulation.selectDrug')}</Label>
-                  <div className="border border-gray-200 rounded-md p-3 max-h-40 overflow-y-auto bio-scrollbar">
+                  <Label id="drug-multiselect-label" className="text-gray-600">{t('simulation.selectDrug')}</Label>
+                  <div className="border border-gray-200 rounded-md p-3 max-h-40 overflow-y-auto bio-scrollbar" role="group" aria-labelledby="drug-multiselect-label">
                     {drugs.map((drug) => (
                       <div key={drug.cid} className="flex items-center space-x-2 py-1">
                         <Checkbox
@@ -253,14 +273,19 @@ export const SimulationPage: React.FC = () => {
               </Badge>
             </CardContent>
           </Card>
-        </div>
+        </motion.div>
       </div>
 
       {/* Simulation settings */}
-      <div className="glass-panel p-0">
+      <motion.div
+        className="glass-panel p-0"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.3 }}
+      >
         <Card className="bg-transparent border-0">
           <CardHeader>
-            <CardTitle className="text-gray-900">{t('simulation.settings')}</CardTitle>
+            <CardTitle as="h2" className="text-gray-900">{t('simulation.settings')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -307,30 +332,32 @@ export const SimulationPage: React.FC = () => {
             </div>
           </CardContent>
         </Card>
-      </div>
+      </motion.div>
 
       {/* Simulation execution section */}
       <div className="space-y-6">
         {/* Error display */}
         {simulationError && (
-          <Alert variant="destructive">
-            <AlertDescription>{simulationError}</AlertDescription>
+          <Alert variant="destructive" role="alert">
+            <AlertDescription><span className="sr-only">Error: </span>{simulationError}</AlertDescription>
           </Alert>
         )}
 
         {/* Simulation button */}
-        <Button
-          onClick={runSimulation}
-          disabled={isSimulating}
-          size="lg"
-          className="w-full bio-button-primary"
-        >
-          {t('simulation.startSimulation')}
-        </Button>
+        <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+          <Button
+            onClick={runSimulation}
+            disabled={isSimulating}
+            size="lg"
+            className="w-full bio-button-primary"
+          >
+            {t('simulation.startSimulation')}
+          </Button>
+        </motion.div>
 
         {/* Progress and status */}
         {isSimulating && (
-          <div className="space-y-4">
+          <div className="space-y-4" aria-live="polite">
             <p className="text-center text-gray-600">
               {t('simulation.simulating').replace('{count}', String(selectedProteins.length * selectedDrugs.length))}
             </p>
@@ -340,7 +367,12 @@ export const SimulationPage: React.FC = () => {
 
         {/* Success message and preview */}
         {simulationComplete && (
-          <div className="space-y-6">
+          <motion.div
+            className="space-y-6"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+          >
             <Alert>
               <AlertDescription>
                 {t('simulation.complete').replace('{count}', String(selectedProteins.length * selectedDrugs.length))}
@@ -351,17 +383,18 @@ export const SimulationPage: React.FC = () => {
             <div className="glass-panel p-0">
               <Card className="bg-transparent border-0">
                 <CardHeader>
-                  <CardTitle className="text-gray-900">{t('simulation.previewResults')}</CardTitle>
+                  <CardTitle as="h2" className="text-gray-900">{t('simulation.previewResults')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="overflow-x-auto">
                     <table className="w-full border-collapse border border-gray-200">
+                      <caption className="sr-only">{t('simulation.previewResults')}</caption>
                       <thead>
                         <tr className="bg-blue-50">
-                          <th className="border border-gray-200 px-4 py-2 text-left text-gray-900">{t('simulation.drug')}</th>
-                          <th className="border border-gray-200 px-4 py-2 text-left text-gray-900">{t('simulation.protein')}</th>
-                          <th className="border border-gray-200 px-4 py-2 text-left text-gray-900">{t('results.bindingAffinity')}</th>
-                          <th className="border border-gray-200 px-4 py-2 text-left text-gray-900">{t('simulation.level')}</th>
+                          <th scope="col" className="border border-gray-200 px-4 py-2 text-left text-gray-900">{t('simulation.drug')}</th>
+                          <th scope="col" className="border border-gray-200 px-4 py-2 text-left text-gray-900">{t('simulation.protein')}</th>
+                          <th scope="col" className="border border-gray-200 px-4 py-2 text-left text-gray-900">{t('results.bindingAffinity')}</th>
+                          <th scope="col" className="border border-gray-200 px-4 py-2 text-left text-gray-900">{t('simulation.level')}</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -377,15 +410,15 @@ export const SimulationPage: React.FC = () => {
                     </table>
                   </div>
 
-                  <div className="mt-4">
-                    <Badge variant="secondary">
+                  <div className="mt-4" role="status">
+                    <Badge variant="secondary" aria-label={t('simulation.goToResults')}>
                       {t('simulation.goToResults')}
                     </Badge>
                   </div>
                 </CardContent>
               </Card>
             </div>
-          </div>
+          </motion.div>
         )}
       </div>
     </div>

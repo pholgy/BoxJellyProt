@@ -133,6 +133,12 @@
     box-shadow: var(--shadow-md);
   }
 
+  .bio-button-primary:disabled,
+  .bio-button-primary[aria-disabled="true"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
   /* === Sidebar === */
   .bio-sidebar {
     background: var(--surface);
@@ -262,6 +268,11 @@
     box-shadow: none;
   }
 
+  .viewer-btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
   .viewer-tag {
     transition: all 0.15s var(--ease);
     cursor: default;
@@ -279,6 +290,22 @@
   .viewer-status {
     animation: viewerFadeIn 0.4s ease-out forwards;
   }
+
+  /* === Nav Emoji Micro-interactions === */
+  .nav-emoji {
+    display: inline-block;
+    margin-right: 0.4em;
+    transition: transform 0.2s ease;
+  }
+
+  /* Animations trigger on parent button hover */
+  button:hover > .nav-emoji-wiggle   { animation: emojiWiggle 0.5s ease; }
+  button:hover > .nav-emoji-stretch  { animation: emojiStretch 0.5s ease; }
+  button:hover > .nav-emoji-bounce   { animation: emojiBounce 0.5s ease; }
+  button:hover > .nav-emoji-spin     { animation: emojiSpin 0.6s ease; }
+  button:hover > .nav-emoji-pulse    { animation: emojiPulse 0.5s ease; }
+  button:hover > .nav-emoji-drop     { animation: emojiDrop 0.5s ease; }
+  button:hover > .nav-emoji-shake    { animation: emojiShake 0.5s ease; }
 
   /* === Language Toggle === */
   .lang-toggle {
@@ -310,6 +337,70 @@
   }
 }
 
+/* === Ocean Bubbles === */
+.ocean-bubbles {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.ocean-bubbles .bubble {
+  position: absolute;
+  bottom: -20px;
+  left: var(--left);
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, rgba(79, 195, 247, 0.25), rgba(79, 195, 247, 0.08));
+  border: 1px solid rgba(79, 195, 247, 0.15);
+  animation: bubbleFloat var(--duration) var(--delay) ease-in infinite;
+}
+
+@keyframes bubbleFloat {
+  0% {
+    transform: translateY(0) translateX(0) scale(0.4);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.7;
+    transform: translateY(-10vh) translateX(calc(var(--wobble) * -0.3)) scale(0.8);
+  }
+  50% {
+    transform: translateY(-50vh) translateX(var(--wobble)) scale(1);
+    opacity: 0.5;
+  }
+  90% {
+    opacity: 0.2;
+  }
+  100% {
+    transform: translateY(-105vh) translateX(calc(var(--wobble) * -0.5)) scale(0.6);
+    opacity: 0;
+  }
+}
+
+/* === Cursor Jellyfish === */
+.cursor-jellyfish {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 9999;
+  transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform;
+  filter: drop-shadow(0 2px 4px rgba(79, 195, 247, 0.3));
+}
+
+.cursor-jellyfish svg {
+  animation: cursorBob 2s ease-in-out infinite;
+}
+
+@keyframes cursorBob {
+  0%, 100% { transform: translateY(0) rotate(-5deg); }
+  50% { transform: translateY(-3px) rotate(5deg); }
+}
+
 /* === Viewer Keyframes === */
 @keyframes viewerSlideUp {
   from { opacity: 0; transform: translateY(8px); }
@@ -325,6 +416,46 @@
 @keyframes viewerFadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+
+/* === Nav Emoji Keyframes === */
+@keyframes emojiWiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-15deg); }
+  75% { transform: rotate(15deg); }
+}
+
+@keyframes emojiStretch {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(1.35); }
+}
+
+@keyframes emojiBounce {
+  0%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-5px); }
+  60% { transform: translateY(-2px); }
+}
+
+@keyframes emojiSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes emojiPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.35); }
+}
+
+@keyframes emojiDrop {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(4px); }
+}
+
+@keyframes emojiShake {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(15deg) scale(1.15); }
+  50% { transform: rotate(-15deg) scale(1.2); }
+  75% { transform: rotate(10deg) scale(1.1); }
 }
 
 /* === Ant Design White Theme Overrides === */

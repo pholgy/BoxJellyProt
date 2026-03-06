@@ -337,7 +337,7 @@ export const ProteinViewer: React.FC<ProteinViewerProps> = ({
           )}
           {status === 'fallback' && (
             <span className="viewer-status text-xs text-amber-600 bg-white/80 px-2 py-0.5 rounded">
-              {source}
+              (estimated) {source}
             </span>
           )}
           {status === 'error' && (

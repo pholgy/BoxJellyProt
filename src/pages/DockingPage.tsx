@@ -68,7 +68,7 @@ function ratingColor(a: number) {
   if (a <= -7) return { fg: '#60A5FA', bg: 'rgba(96,165,250,0.12)', label: 'Good' };
   if (a <= -5) return { fg: '#FBBF24', bg: 'rgba(251,191,36,0.12)', label: 'Moderate' };
   if (a <= -3) return { fg: '#F87171', bg: 'rgba(248,113,113,0.12)', label: 'Weak' };
-  return { fg: '#9CA3AF', bg: 'rgba(156,163,175,0.12)', label: 'Very Weak' };
+  return { fg: '#6B7280', bg: 'rgba(156,163,175,0.12)', label: 'Very Weak' };
 }
 
 /* ─── Selection Card Components ──────────────────────────── */
@@ -76,8 +76,12 @@ function ratingColor(a: number) {
 const ProteinCard: React.FC<{
   protein: Protein; selected: boolean; onClick: () => void;
 }> = ({ protein, selected, onClick }) => (
-  <button
+  <motion.button
     onClick={onClick}
+    aria-pressed={selected}
+    whileHover={{ scale: 1.02, y: -1 }}
+    whileTap={{ scale: 0.98 }}
+    transition={{ type: "spring", stiffness: 400, damping: 17 }}
     className={`
       w-full text-left p-3.5 rounded-xl border transition-all duration-200
       ${selected
@@ -91,12 +95,12 @@ const ProteinCard: React.FC<{
         <div className={`text-sm font-semibold truncate ${selected ? 'text-blue-900' : 'text-gray-900'}`}>
           {protein.name}
         </div>
-        <div className={`text-xs italic mt-0.5 truncate ${selected ? 'text-blue-600' : 'text-gray-400'}`}>
+        <div className={`text-xs italic mt-0.5 truncate ${selected ? 'text-blue-600' : 'text-gray-500'}`}>
           {protein.organism}
         </div>
       </div>
       {selected && (
-        <div className="shrink-0 w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center">
+        <div aria-hidden="true" className="shrink-0 w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center">
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
             <path d="M2.5 6L5 8.5L9.5 3.5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
@@ -111,14 +115,18 @@ const ProteinCard: React.FC<{
         {protein.toxin_type}
       </span>
     </div>
-  </button>
+  </motion.button>
 );
 
 const DrugCard: React.FC<{
   drug: DrugCandidate; selected: boolean; onClick: () => void;
 }> = ({ drug, selected, onClick }) => (
-  <button
+  <motion.button
     onClick={onClick}
+    aria-pressed={selected}
+    whileHover={{ scale: 1.02, y: -1 }}
+    whileTap={{ scale: 0.98 }}
+    transition={{ type: "spring", stiffness: 400, damping: 17 }}
     className={`
       w-full text-left p-3.5 rounded-xl border transition-all duration-200
       ${selected
@@ -132,12 +140,12 @@ const DrugCard: React.FC<{
         <div className={`text-sm font-semibold truncate ${selected ? 'text-emerald-900' : 'text-gray-900'}`}>
           {drug.name}
         </div>
-        <div className={`text-xs mt-0.5 truncate ${selected ? 'text-emerald-600' : 'text-gray-400'}`}>
+        <div className={`text-xs mt-0.5 truncate ${selected ? 'text-emerald-600' : 'text-gray-500'}`}>
           {drug.category}
         </div>
       </div>
       {selected && (
-        <div className="shrink-0 w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center">
+        <div aria-hidden="true" className="shrink-0 w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center">
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
             <path d="M2.5 6L5 8.5L9.5 3.5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
@@ -152,7 +160,7 @@ const DrugCard: React.FC<{
         {drug.molecular_weight.toFixed(0)} g/mol
       </span>
     </div>
-  </button>
+  </motion.button>
 );
 
 /* ─── Simulation Loading Animation ───────────────────────── */
@@ -184,9 +192,9 @@ const DockingAnimation: React.FC = () => (
         <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500/30 to-emerald-500/30 border border-white/20 backdrop-blur-sm" />
       </motion.div>
     </div>
-    <div className="text-center">
+    <div className="text-center" role="status" aria-live="polite">
       <div className="text-sm font-semibold text-gray-700">Simulating molecular docking...</div>
-      <div className="text-xs text-gray-400 mt-1">Calculating binding affinity and interactions</div>
+      <div className="text-xs text-gray-500 mt-1">Calculating binding affinity and interactions</div>
     </div>
   </div>
 );
@@ -612,11 +620,13 @@ export const DockingPage: React.FC = () => {
                   )}
                 </div>
                 <input
-                  type="text"
+                  type="search"
+                  autoComplete="off"
+                  aria-label={language === 'th' ? 'ค้นหาโปรตีน' : 'Search proteins'}
                   placeholder={language === 'th' ? 'ค้นหาโปรตีน...' : 'Search proteins...'}
                   value={proteinSearch}
                   onChange={e => setProteinSearch(e.target.value)}
-                  className="w-full px-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg mb-3 outline-none focus:border-blue-300 focus:ring-2 focus:ring-blue-100 transition-all"
+                  className="w-full px-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg mb-3 outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-400/40 transition-all"
                 />
                 <div className="grid grid-cols-1 gap-2 max-h-[340px] overflow-y-auto pr-1 bio-scrollbar">
                   {filteredProteins.map(p => (
@@ -630,7 +640,7 @@ export const DockingPage: React.FC = () => {
                     />
                   ))}
                   {filteredProteins.length === 0 && (
-                    <div className="text-center py-8 text-sm text-gray-400">{t('common.noResults')}</div>
+                    <div className="text-center py-8 text-sm text-gray-500" role="status">{t('common.noResults')}</div>
                   )}
                 </div>
               </div>
@@ -646,11 +656,13 @@ export const DockingPage: React.FC = () => {
                   )}
                 </div>
                 <input
-                  type="text"
+                  type="search"
+                  autoComplete="off"
+                  aria-label={language === 'th' ? 'ค้นหาสารยา' : 'Search drugs'}
                   placeholder={language === 'th' ? 'ค้นหาสารยา...' : 'Search drugs...'}
                   value={drugSearch}
                   onChange={e => setDrugSearch(e.target.value)}
-                  className="w-full px-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg mb-3 outline-none focus:border-emerald-300 focus:ring-2 focus:ring-emerald-100 transition-all"
+                  className="w-full px-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg mb-3 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/40 transition-all"
                 />
                 <div className="grid grid-cols-1 gap-2 max-h-[340px] overflow-y-auto pr-1 bio-scrollbar">
                   {filteredDrugs.map(d => (
@@ -664,7 +676,7 @@ export const DockingPage: React.FC = () => {
                     />
                   ))}
                   {filteredDrugs.length === 0 && (
-                    <div className="text-center py-8 text-sm text-gray-400">{t('common.noResults')}</div>
+                    <div className="text-center py-8 text-sm text-gray-500" role="status">{t('common.noResults')}</div>
                   )}
                 </div>
               </div>
@@ -681,12 +693,13 @@ export const DockingPage: React.FC = () => {
                   }
                 `}
                 disabled={!selectedProtein || !selectedDrug}
+                aria-describedby={(!selectedProtein || !selectedDrug) ? 'docking-hint' : undefined}
                 onClick={handleDock}
               >
                 {t('docking.runDocking')}
               </button>
               {(!selectedProtein || !selectedDrug) && (
-                <p className="text-xs text-gray-400">{t('docking.selectBothFirst')}</p>
+                <p id="docking-hint" className="text-xs text-gray-500">{t('docking.selectBothFirst')}</p>
               )}
             </div>
           </motion.div>
@@ -716,7 +729,10 @@ export const DockingPage: React.FC = () => {
           >
             {/* ── Stats Bar ── */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              <div
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.05 * 0, type: "spring", stiffness: 300, damping: 20 }}
                 className="rounded-xl p-4 text-center border"
                 style={{ backgroundColor: rc?.bg, borderColor: `${rc?.fg}33` }}
               >
@@ -730,32 +746,47 @@ export const DockingPage: React.FC = () => {
                 >
                   {rText}
                 </div>
-              </div>
-              <div className="rounded-xl p-4 text-center bg-sky-50/80 border border-sky-100">
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.05 * 1, type: "spring", stiffness: 300, damping: 20 }}
+                className="rounded-xl p-4 text-center bg-sky-50/80 border border-sky-100"
+              >
                 <div className="text-2xl font-bold font-mono text-sky-600">{result.hydrogen_bonds}</div>
                 <div className="text-[11px] text-gray-500 mt-0.5">{t('docking.hBonds')}</div>
-              </div>
-              <div className="rounded-xl p-4 text-center bg-violet-50/80 border border-violet-100">
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.05 * 2, type: "spring", stiffness: 300, damping: 20 }}
+                className="rounded-xl p-4 text-center bg-violet-50/80 border border-violet-100"
+              >
                 <div className="text-2xl font-bold font-mono text-violet-600">{result.hydrophobic_contacts}</div>
                 <div className="text-[11px] text-gray-500 mt-0.5">{t('docking.hydrophobic')}</div>
-              </div>
-              <div className={`rounded-xl p-4 text-center border ${
-                result.is_successful
-                  ? 'bg-emerald-50/80 border-emerald-200'
-                  : 'bg-red-50/80 border-red-200'
-              }`}>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.05 * 3, type: "spring", stiffness: 300, damping: 20 }}
+                className={`rounded-xl p-4 text-center border ${
+                  result.is_successful
+                    ? 'bg-emerald-50/80 border-emerald-200'
+                    : 'bg-red-50/80 border-red-200'
+                }`}
+              >
                 <div className={`text-2xl font-bold ${result.is_successful ? 'text-emerald-500' : 'text-red-400'}`}>
                   {result.is_successful ? '✓' : '✗'}
                 </div>
                 <div className="text-[11px] text-gray-500 mt-0.5">
                   {result.is_successful ? t('docking.successful') : t('docking.unsuccessful')}
                 </div>
-              </div>
+              </motion.div>
             </div>
 
             {/* Disclaimer */}
             <div className="rounded-lg bg-amber-50 border border-amber-200 px-4 py-2.5 flex items-start gap-2.5">
-              <span className="text-amber-500 text-sm mt-0.5">&#9888;</span>
+              <span className="text-amber-500 text-sm mt-0.5" aria-hidden="true">&#9888;</span>
               <div className="text-xs text-amber-800 leading-relaxed">
                 <strong>{language === 'th' ? 'จำลองเพื่อการศึกษา' : 'Educational Simulation'}</strong>
                 {' — '}
@@ -778,7 +809,7 @@ export const DockingPage: React.FC = () => {
                     {result.drug.name}
                   </span>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3" role="status" aria-live="polite">
                   {viewerStatus === 'loading' && (
                     <span className="text-xs text-gray-500 flex items-center gap-1.5">
                       <span className="inline-block w-3 h-3 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
@@ -786,18 +817,19 @@ export const DockingPage: React.FC = () => {
                     </span>
                   )}
                   {viewerStatus === 'fallback' && (
-                    <span className="text-[10px] text-amber-400/80 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
-                      Generated from sequence
+                    <span className="text-xs text-amber-400/80 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
+                      (estimated) Generated from sequence
                     </span>
                   )}
                   {viewerStatus === 'loaded' && (
-                    <span className="text-[10px] text-emerald-400/80 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                    <span className="text-xs text-emerald-400/80 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
                       AlphaFold
                     </span>
                   )}
                   <button
                     onClick={() => setShowDetails(!showDetails)}
-                    className="text-xs text-gray-400 hover:text-white px-2 py-1 rounded hover:bg-white/10 transition-colors"
+                    aria-expanded={showDetails}
+                    className="text-xs text-gray-400 hover:text-white px-2 py-1 rounded hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white/60 transition-colors"
                   >
                     {showDetails ? 'Hide Details' : 'Show Details'}
                   </button>
@@ -808,6 +840,8 @@ export const DockingPage: React.FC = () => {
               <div className="relative bg-[#0B1120]">
                 <div
                   ref={viewerContainerRef}
+                  role="img"
+                  aria-label={`3D molecular docking visualization: ${result.protein.name} with ${result.drug.name}`}
                   style={{ height: '520px', width: '100%', position: 'relative', cursor: 'crosshair' }}
                 />
 
@@ -828,7 +862,13 @@ export const DockingPage: React.FC = () => {
                 </div>
 
                 {/* Floating affinity badge */}
-                <div
+                <motion.div
+                  animate={{ boxShadow: [
+                    `0 0 0px ${rc?.fg}00`,
+                    `0 0 12px ${rc?.fg}44`,
+                    `0 0 0px ${rc?.fg}00`,
+                  ] }}
+                  transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
                   className="absolute top-3 right-3 rounded-lg px-3 py-2 border backdrop-blur-sm"
                   style={{
                     backgroundColor: 'rgba(0,0,0,0.5)',
@@ -836,9 +876,9 @@ export const DockingPage: React.FC = () => {
                   }}
                 >
                   <div className="text-lg font-bold font-mono" style={{ color: rc?.fg }}>
-                    {result.binding_affinity} <span className="text-[10px] font-normal text-gray-400">kcal/mol</span>
+                    {result.binding_affinity} <span className="text-xs font-normal text-gray-300">kcal/mol</span>
                   </div>
-                </div>
+                </motion.div>
               </div>
             </div>
 
@@ -925,6 +965,9 @@ export const DockingPage: React.FC = () => {
                             style={{ color: result.pocket.druggability_score >= 0.7 ? '#059669' : '#D97706' }}
                           >
                             {(result.pocket.druggability_score * 100).toFixed(0)}%
+                            <span className="ml-1 text-[10px] font-normal">
+                              {result.pocket.druggability_score >= 0.7 ? '(High)' : '(Moderate)'}
+                            </span>
                           </span>
                         </div>
                       </div>

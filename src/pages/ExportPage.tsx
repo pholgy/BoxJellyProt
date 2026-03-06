@@ -1,4 +1,5 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
+import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Alert, AlertDescription } from '../components/ui/alert';
@@ -23,6 +24,7 @@ import { useLanguage, getRatingText } from '../i18n';
 export const ExportPage: React.FC = () => {
   const { simulationResults } = useSimulationStore();
   const { t, language } = useLanguage();
+  const [downloadSuccess, setDownloadSuccess] = useState<string | null>(null);
 
   // Sort results by binding affinity (exact Streamlit logic)
   const sortedResults = useMemo(() => {
@@ -56,9 +58,9 @@ export const ExportPage: React.FC = () => {
     t('export.proteinName'),
     t('export.uniprotCode'),
     t('common.organism'),
-    'Binding_Affinity_kcal_mol',
+    t('results.bindingAffinity'),
     t('results.hBonds'),
-    'Hydrophobic_Contacts',
+    t('results.hydrophobicContacts'),
     t('results.rating')
   ], [t]);
 
@@ -102,7 +104,7 @@ export const ExportPage: React.FC = () => {
     // In a real implementation, you would use a library like xlsx to create proper Excel files
     // For this demo, we'll create a CSV with Excel MIME type
     const blob = new Blob(['\ufeff' + csv], {
-      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      type: 'text/csv;charset=utf-8;'
     });
 
     return blob;
@@ -122,6 +124,8 @@ export const ExportPage: React.FC = () => {
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
+    setDownloadSuccess('csv');
+    setTimeout(() => setDownloadSuccess(null), 3000);
   };
 
   // Download Excel - always uses English file names
@@ -137,12 +141,23 @@ export const ExportPage: React.FC = () => {
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
+    setDownloadSuccess('excel');
+    setTimeout(() => setDownloadSuccess(null), 3000);
   };
 
   if (!simulationResults || simulationResults.length === 0) {
     return (
       <div className="max-w-6xl mx-auto space-y-8">
-        <h1 className="text-2xl font-semibold text-gray-900">{t('export.title')}</h1>
+        <h1 className="text-2xl font-semibold text-gray-900 flex items-center gap-2">
+          <motion.span
+            animate={{ y: [0, -3, 0], rotate: [0, 5, -5, 0] }}
+            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+            className="inline-block"
+          >
+            {'📤'}
+          </motion.span>
+          {t('export.title')}
+        </h1>
         <Alert>
           <AlertDescription>
             {t('export.noResults')}
@@ -168,7 +183,16 @@ export const ExportPage: React.FC = () => {
   return (
     <div className="max-w-6xl mx-auto space-y-8">
       {/* Header */}
-      <h1 className="text-2xl font-semibold text-gray-900">{t('export.title')}</h1>
+      <h1 className="text-2xl font-semibold text-gray-900 flex items-center gap-2">
+        <motion.span
+          animate={{ y: [0, -3, 0], rotate: [0, 5, -5, 0] }}
+          transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+          className="inline-block"
+        >
+          {'📤'}
+        </motion.span>
+        {t('export.title')}
+      </h1>
 
       {/* Export options section */}
       <div>
@@ -185,9 +209,20 @@ export const ExportPage: React.FC = () => {
                 {t('export.csvDesc')}
               </p>
 
-              <Button onClick={downloadCSV} className="w-full">
-                {t('export.downloadCsv')}
-              </Button>
+              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                <Button onClick={downloadCSV} className="w-full">
+                  {t('export.downloadCsv')}
+                </Button>
+              </motion.div>
+              {downloadSuccess === 'csv' && (
+                <motion.p
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-sm text-green-600 text-center mt-2"
+                >
+                  {'Downloaded successfully! 🎉'}
+                </motion.p>
+              )}
             </CardContent>
           </Card>
 
@@ -201,9 +236,20 @@ export const ExportPage: React.FC = () => {
                 {t('export.excelDesc')}
               </p>
 
-              <Button onClick={downloadExcel} className="w-full">
-                {t('export.downloadExcel')}
-              </Button>
+              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                <Button onClick={downloadExcel} className="w-full">
+                  {t('export.downloadExcel')}
+                </Button>
+              </motion.div>
+              {downloadSuccess === 'excel' && (
+                <motion.p
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-sm text-green-600 text-center mt-2"
+                >
+                  {'Downloaded successfully! 🎉'}
+                </motion.p>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -213,12 +259,12 @@ export const ExportPage: React.FC = () => {
       <div>
         <h2 className="text-lg font-semibold mb-4 text-gray-900">{t('export.previewTitle')}</h2>
 
-        <div className="overflow-x-auto rounded-lg border border-gray-200">
-          <table className="w-full border-collapse">
+        <div role="region" tabIndex={0} className="overflow-x-auto rounded-lg border border-gray-200 focus-visible:ring-2 focus-visible:ring-blue-500 outline-none">
+          <table className="w-full border-collapse" aria-label={t('export.previewTitle')}>
             <thead>
               <tr className="bg-gray-50">
                 {exportHeaders.map(header => (
-                  <th key={header} className="border-b border-gray-200 px-4 py-2 text-left text-sm font-medium text-gray-600">
+                  <th key={header} scope="col" className="border-b border-gray-200 px-4 py-2 text-left text-sm font-medium text-gray-600">
                     {header}
                   </th>
                 ))}
@@ -253,12 +299,12 @@ export const ExportPage: React.FC = () => {
         <h2 className="text-lg font-semibold mb-4 text-gray-900">{t('export.publicationTitle')}</h2>
         <p className="text-gray-500 mb-4">{t('export.publicationDesc')}</p>
 
-        <div className="overflow-x-auto rounded-lg border border-gray-200">
-          <table className="w-full border-collapse">
+        <div role="region" tabIndex={0} className="overflow-x-auto rounded-lg border border-gray-200 focus-visible:ring-2 focus-visible:ring-blue-500 outline-none">
+          <table className="w-full border-collapse" aria-label={t('export.publicationTitle')}>
             <thead>
               <tr className="bg-gray-50">
                 {publicationHeaders.map(header => (
-                  <th key={header} className="border-b border-gray-200 px-4 py-2 text-left font-medium text-gray-600">
+                  <th key={header} scope="col" className="border-b border-gray-200 px-4 py-2 text-left font-medium text-gray-600">
                     {header}
                   </th>
                 ))}
@@ -284,26 +330,25 @@ export const ExportPage: React.FC = () => {
 
       {/* Summary statistics */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
-          <CardContent className="p-6 text-center">
-            <div className="text-2xl font-bold font-mono text-gray-900">{exportData.length}</div>
-            <p className="text-sm text-gray-500">{t('export.totalResults')}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-6 text-center">
-            <div className="text-2xl font-bold font-mono text-gray-900">{successfulResults.length}</div>
-            <p className="text-sm text-gray-500">{t('export.successfulBindings')}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-6 text-center">
-            <div className="text-2xl font-bold font-mono text-gray-900">
-              {sortedResults[0]?.binding_affinity.toFixed(1) || 'N/A'} kcal/mol
-            </div>
-            <p className="text-sm text-gray-500">{t('results.bestAffinity')}</p>
-          </CardContent>
-        </Card>
+        {[
+          { value: exportData.length, label: t('export.totalResults'), id: 'stat-total-results' },
+          { value: successfulResults.length, label: t('export.successfulBindings'), id: 'stat-successful-bindings' },
+          { value: `${sortedResults[0]?.binding_affinity.toFixed(1) || 'N/A'} kcal/mol`, label: t('results.bestAffinity'), id: 'stat-best-affinity' },
+        ].map((stat, index) => (
+          <motion.div
+            key={stat.id}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3, delay: index * 0.1 }}
+          >
+            <Card>
+              <CardContent className="p-6 text-center">
+                <div className="text-2xl font-bold font-mono text-gray-900" aria-labelledby={stat.id}>{stat.value}</div>
+                <p id={stat.id} className="text-sm text-gray-500">{stat.label}</p>
+              </CardContent>
+            </Card>
+          </motion.div>
+        ))}
       </div>
     </div>
   );

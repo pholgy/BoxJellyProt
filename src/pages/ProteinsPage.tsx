@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useMemo } from 'react';
+import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { Checkbox } from '../components/ui/checkbox';
 import { Label } from '../components/ui/label';
 import { Badge } from '../components/ui/badge';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../components/ui/collapsible';
-import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
+import { ChevronDownIcon } from '@heroicons/react/24/outline';
 import { useDatabaseStore } from '../stores';
 import { useLanguage } from '../i18n';
 import { ProteinViewer } from '../components/viewers/ProteinViewer';
@@ -75,7 +76,7 @@ export const ProteinsPage: React.FC = () => {
   if (isLoading) {
     return (
       <div className="max-w-6xl mx-auto">
-        <div className="text-center">
+        <div className="text-center" role="status" aria-live="polite">
           <p className="text-lg text-gray-600">{t('common.loading')}</p>
         </div>
       </div>
@@ -85,7 +86,14 @@ export const ProteinsPage: React.FC = () => {
   return (
     <div className="max-w-6xl mx-auto space-y-8">
       {/* Header */}
-      <h1 className="text-2xl font-semibold text-gray-900">{t('proteins.title')}</h1>
+      <h1 className="text-2xl font-semibold text-gray-900">
+        <motion.span
+          animate={{ rotate: [0, 10, -10, 0] }}
+          transition={{ duration: 3, repeat: Infinity }}
+          style={{ display: 'inline-block' }}
+        >🧬</motion.span>{' '}
+        {t('proteins.title')}
+      </h1>
 
       {/* Filters */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -125,35 +133,51 @@ export const ProteinsPage: React.FC = () => {
       </div>
 
       {/* Result count info */}
-      <div>
-        <Badge variant="secondary" className="text-sm px-3 py-1.5 bg-blue-50 text-blue-600">
-          {t('proteins.found')} {filteredProteins.length} {t('proteins.proteinsUnit')}
-        </Badge>
+      <div role="status" aria-live="polite" aria-atomic="true">
+        <motion.span
+          key={filteredProteins.length}
+          initial={{ scale: 0.8 }}
+          animate={{ scale: 1 }}
+          transition={{ type: "spring", stiffness: 300 }}
+        >
+          <Badge variant="secondary" className="text-sm px-3 py-1.5 bg-blue-50 text-blue-600">
+            {t('proteins.found')} {filteredProteins.length} {t('proteins.proteinsUnit')}
+          </Badge>
+        </motion.span>
       </div>
 
       {/* Protein cards */}
       <div className="space-y-4">
-        {filteredProteins.map((protein) => {
+        {filteredProteins.map((protein, index) => {
           const isExpanded = expandedProteins.has(protein.uniprot_id);
           const isSequenceVisible = sequenceVisible.has(protein.uniprot_id);
 
           return (
-            <Card key={protein.uniprot_id} className="w-full glass-panel border-gray-200">
+            <motion.div
+              key={protein.uniprot_id}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.08, duration: 0.4 }}
+              whileHover={{ y: -2 }}
+            >
+            <Card className="w-full glass-panel border-gray-200">
               <Collapsible
                 open={isExpanded}
                 onOpenChange={() => toggleProteinExpansion(protein.uniprot_id)}
               >
                 <CollapsibleTrigger asChild>
-                  <CardHeader className="cursor-pointer hover:bg-gray-50">
-                    <CardTitle className="flex justify-between items-center text-gray-900">
+                  <CardHeader className="cursor-pointer hover:bg-gray-50 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 outline-none">
+                    <CardTitle as="h2" className="flex justify-between items-center text-gray-900">
                       <span>
                         <strong>{protein.name}</strong> - {protein.organism}
                       </span>
-                      {isExpanded ? (
-                        <ChevronUpIcon className="h-5 w-5 text-gray-500" />
-                      ) : (
-                        <ChevronDownIcon className="h-5 w-5 text-gray-500" />
-                      )}
+                      <motion.span
+                        animate={{ rotate: isExpanded ? 180 : 0 }}
+                        transition={{ duration: 0.25 }}
+                        style={{ display: 'inline-flex' }}
+                      >
+                        <ChevronDownIcon className="h-5 w-5 text-gray-500" aria-hidden="true" />
+                      </motion.span>
                     </CardTitle>
                   </CardHeader>
                 </CollapsibleTrigger>
@@ -189,7 +213,7 @@ export const ProteinsPage: React.FC = () => {
                             <div className="bg-gray-50 p-4 rounded-md border border-gray-200">
                               <code className="text-sm font-mono break-all text-gray-600">
                                 {protein.sequence.length > 100
-                                  ? protein.sequence.substring(0, 100) + "..."
+                                  ? protein.sequence.substring(0, 100) + `...+${protein.sequence.length - 100} more`
                                   : protein.sequence
                                 }
                               </code>
@@ -216,14 +240,15 @@ export const ProteinsPage: React.FC = () => {
                 </CollapsibleContent>
               </Collapsible>
             </Card>
+            </motion.div>
           );
         })}
       </div>
 
       {/* Empty state */}
       {filteredProteins.length === 0 && (
-        <div className="text-center py-8">
-          <p className="text-gray-400 text-lg">{t('proteins.noProteins')}</p>
+        <div className="text-center py-8" role="status" aria-live="polite">
+          <p className="text-gray-500 text-lg">{t('proteins.noProteins')}</p>
         </div>
       )}
     </div>

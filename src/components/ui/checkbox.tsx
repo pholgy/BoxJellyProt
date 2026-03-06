@@ -15,8 +15,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({
   ...props
 }) => {
   return (
-    <label
-      htmlFor={id}
+    <span
       className={`relative inline-flex items-center ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
     >
       <input
@@ -30,7 +29,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({
       />
       <div
         className={`
-          w-4 h-4 border border-gray-300 rounded flex items-center justify-center
+          w-5 h-5 border border-gray-300 rounded flex items-center justify-center
           peer-checked:bg-blue-600 peer-checked:border-blue-600
           peer-focus-visible:ring-2 peer-focus-visible:ring-blue-500 peer-focus-visible:ring-offset-2
           ${!checked ? 'bg-white' : 'bg-blue-600 border-blue-600'}
@@ -39,9 +38,9 @@ export const Checkbox: React.FC<CheckboxProps> = ({
         `}
       >
         {checked && (
-          <CheckIcon className="w-3 h-3 text-white" />
+          <CheckIcon className="w-3.5 h-3.5 text-white" />
         )}
       </div>
-    </label>
+    </span>
   );
 };

@@ -190,7 +190,7 @@ export const SelectContent: React.FC<SelectContentProps> = ({
 
   let index = 0;
   return (
-    <div role="listbox" className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
+    <div role="listbox" aria-label="Options" className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
       {React.Children.map(children, child => {
         if (React.isValidElement(child) && child.type === SelectItem) {
           const currentIndex = index++;
@@ -224,10 +224,17 @@ export const SelectItem: React.FC<SelectItemProps> = ({
   <div
     role="option"
     aria-selected={isSelected}
+    tabIndex={-1}
     className={`px-3 py-2 cursor-pointer hover:bg-gray-100 ${
       isSelected ? 'bg-blue-50 text-blue-900' : ''
-    } ${isFocused ? 'bg-gray-100' : ''}`}
+    } ${isFocused ? 'bg-gray-100 outline outline-2 outline-blue-500' : ''}`}
     onClick={() => onSelect?.(value, typeof children === 'string' ? children : undefined)}
+    onKeyDown={(e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        onSelect?.(value, typeof children === 'string' ? children : undefined);
+      }
+    }}
   >
     {children}
   </div>

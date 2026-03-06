@@ -154,7 +154,7 @@
 
 .reference {
   font-style: italic;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   margin-top: 16px !important;
   margin-bottom: 0 !important;
 }

@@ -12,6 +12,8 @@ import { DockingPage } from './pages/DockingPage';
 import { DesignDemoPage } from './pages/DesignDemoPage';
 import { LanguageProvider, useLanguage } from './i18n';
 import { antdBioTheme } from './theme';
+import { OceanBubbles } from './components/Effects/OceanBubbles';
+import { CursorJellyfish } from './components/Effects/CursorJellyfish';
 import './index.css';
 
 const pageComponents: Record<string, React.FC> = {
@@ -76,6 +78,8 @@ const AppContent: React.FC = () => {
   return (
     <ConfigProvider theme={antdBioTheme}>
       <div data-testid="app-loaded" className="bio-background">
+        <OceanBubbles />
+        <CursorJellyfish />
         <AppLayout currentPage={currentPage} onPageChange={handlePageChange}>
           <AnimatePresence mode="wait">
             <motion.div

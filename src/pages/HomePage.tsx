@@ -1,5 +1,6 @@
 import React from 'react';
 import { Card, Row, Col, Table, Alert, Statistic, Divider, Typography } from 'antd';
+import { motion } from 'framer-motion';
 import { useLanguage } from '../i18n';
 import './HomePage.css';
 
@@ -43,49 +44,74 @@ export const HomePage: React.FC = () => {
   return (
     <div className="homepage">
       {/* Main Header */}
-      <div className="header-section">
+      <header className="header-section">
         <Title level={1} className="main-header">
-          {t('home.title')}
+          <motion.span
+            animate={{ y: [0, -4, 0] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            style={{ display: 'inline-block' }}
+          >🪼</motion.span>{' '}{t('home.title').replace(/^🪼\s*/, '')}
         </Title>
         <Paragraph className="sub-header">
           {t('home.subtitle')}
         </Paragraph>
-      </div>
+      </header>
 
       {/* Feature Cards */}
       <Row gutter={[24, 24]} className="feature-cards">
         <Col xs={24} md={8}>
-          <Card title={t('home.proteinDbTitle')} size="small">
-            <ul>
-              {proteinDbItems.map((item, index) => (
-                <li key={index}>
-                  {index === 0 ? <strong>{item}</strong> : item}
-                </li>
-              ))}
-            </ul>
-          </Card>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0 * 0.15, duration: 0.5 }}
+            whileHover={{ scale: 1.02, transition: { duration: 0.2 } }}
+          >
+            <Card title={t('home.proteinDbTitle')} size="small">
+              <ul role="list">
+                {proteinDbItems.map((item, index) => (
+                  <li key={index}>
+                    {index === 0 ? <strong>{item}</strong> : item}
+                  </li>
+                ))}
+              </ul>
+            </Card>
+          </motion.div>
         </Col>
 
         <Col xs={24} md={8}>
-          <Card title={t('home.drugDbTitle')} size="small">
-            <ul>
-              {drugDbItems.map((item, index) => (
-                <li key={index}>
-                  {index === 0 ? <strong>{item}</strong> : item}
-                </li>
-              ))}
-            </ul>
-          </Card>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1 * 0.15, duration: 0.5 }}
+            whileHover={{ scale: 1.02, transition: { duration: 0.2 } }}
+          >
+            <Card title={t('home.drugDbTitle')} size="small">
+              <ul role="list">
+                {drugDbItems.map((item, index) => (
+                  <li key={index}>
+                    {index === 0 ? <strong>{item}</strong> : item}
+                  </li>
+                ))}
+              </ul>
+            </Card>
+          </motion.div>
         </Col>
 
         <Col xs={24} md={8}>
-          <Card title={t('home.simulationTitle')} size="small">
-            <ul>
-              {simulationItems.map((item, index) => (
-                <li key={index}>{item}</li>
-              ))}
-            </ul>
-          </Card>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 2 * 0.15, duration: 0.5 }}
+            whileHover={{ scale: 1.02, transition: { duration: 0.2 } }}
+          >
+            <Card title={t('home.simulationTitle')} size="small">
+              <ul role="list">
+                {simulationItems.map((item, index) => (
+                  <li key={index}>{item}</li>
+                ))}
+              </ul>
+            </Card>
+          </motion.div>
         </Col>
       </Row>
 
@@ -107,29 +133,47 @@ export const HomePage: React.FC = () => {
           </Col>
 
           <Col xs={24} lg={8}>
-            <Alert
-              message={t('home.quickStart')}
-              description={
-                <ol>
-                  {quickStartSteps.map((step, index) => (
-                    <li key={index}>
-                      {index === 0 ? (
-                        <span dangerouslySetInnerHTML={{
-                          __html: step.replace(
-                            /(จำลองการทดลอง|Simulation)/,
-                            '<strong>$1</strong>'
-                          ),
-                        }} />
-                      ) : (
-                        step
-                      )}
-                    </li>
-                  ))}
-                </ol>
-              }
-              type="info"
-              showIcon
-            />
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.5, type: "spring", stiffness: 200 }}
+            >
+              <Alert
+                message={t('home.quickStart')}
+                description={
+                  <ol>
+                    {quickStartSteps.map((step, index) => {
+                      const stepEmojis = ['\uD83D\uDD2C', '\u26A1', '\uD83D\uDCCA', '\uD83E\uDDEA', '\uD83D\uDCE4'];
+                      const emoji = stepEmojis[index] || '\u2728';
+                      return (
+                        <li key={index}>
+                          <motion.span
+                            style={{ display: 'inline-block', cursor: 'default' }}
+                            whileHover={{ rotate: [0, -10, 10, -10, 0], transition: { duration: 0.4 } }}
+                          >{emoji}</motion.span>{' '}
+                          {index === 0 ? (
+                            (() => {
+                              const match = step.match(/(จำลองการทดลอง|Simulation)/);
+                              if (match && match.index !== undefined) {
+                                const before = step.slice(0, match.index);
+                                const matched = match[1];
+                                const after = step.slice(match.index + matched.length);
+                                return <>{before}<strong>{matched}</strong>{after}</>;
+                              }
+                              return step;
+                            })()
+                          ) : (
+                            step
+                          )}
+                        </li>
+                      );
+                    })}
+                  </ol>
+                }
+                type="info"
+                showIcon
+              />
+            </motion.div>
           </Col>
         </Row>
       </div>
@@ -142,20 +186,31 @@ export const HomePage: React.FC = () => {
 
         <Row gutter={[24, 24]} align="middle">
           <Col xs={24} md={8}>
-            <div className="featured-metric">
+            <motion.div
+              className="featured-metric"
+              initial={{ x: -20, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ delay: 0.3, duration: 0.5, ease: "easeOut" }}
+            >
               <Statistic
                 title={t('home.bestInhibitor')}
                 value="Silymarin"
                 suffix={
-                  <div>
-                    <div className="binding-affinity">-9.5 kcal/mol</div>
+                  <span style={{ display: 'block' }}>
+                    <motion.span
+                      style={{ display: 'block' }}
+                      className="binding-affinity"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.6, duration: 0.4 }}
+                    >-9.5 kcal/mol</motion.span>
                     <Text type="secondary" className="target-protein">
                       {t('home.targetProtein')}
                     </Text>
-                  </div>
+                  </span>
                 }
               />
-            </div>
+            </motion.div>
           </Col>
 
           <Col xs={24} md={16}>

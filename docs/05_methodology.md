@@ -1,7 +1,7 @@
 # วิธีการดำเนินงาน (Methodology)
 
 ## โครงการ: โปรแกรมวิเคราะห์โครงสร้างโปรตีนในพิษแมงกะพรุนกล่อง
-### พัฒนาเป็นเว็บแอปพลิเคชันด้วย Streamlit
+### พัฒนาเป็นเว็บแอปพลิเคชันด้วย React + TypeScript (ย้ายจาก Streamlit)
 
 ---
 
@@ -43,8 +43,10 @@
 ## ขั้นตอนที่ 4: สร้างส่วนแสดงผลโครงสร้าง 3 มิติ
 
 1. ใช้เครื่องมือ 3Dmol.js แสดงโครงสร้างโมเลกุลแบบ 3 มิติ
-2. เชื่อมต่อกับ PubChem เพื่อดึงโครงสร้าง 3 มิติของสารยา
-3. สร้างโครงสร้างจำลอง Alpha Helix สำหรับโปรตีน
+2. เชื่อมต่อกับ PubChem และ NCI Cactus เพื่อดึงโครงสร้าง 3 มิติของสารยา (SDF format)
+3. เชื่อมต่อกับ AlphaFold API เพื่อดึงโครงสร้าง 3 มิติของโปรตีน (PDB format)
+4. แสดง Molecular Surface (พื้นผิวโมเลกุล) แบบ PyMOL-style
+5. แสดงลูกศรอธิบาย (Annotations) ชี้ตำแหน่ง Binding Pocket, Drug Molecule, และ H-bonds
 
 ---
 
@@ -64,42 +66,61 @@
 
 ## ขั้นตอนที่ 6: ออกแบบและสร้างหน้าเว็บ
 
-### หน้าที่ 1: หน้าแรก
+> พัฒนาด้วย React 18 + TypeScript + Vite + Tailwind CSS + Ant Design
+> รองรับ 2 ภาษา (ไทย/อังกฤษ) ทั้งเว็บไซต์
+> Deploy บน Vercel (https://boxjellyprot.vercel.app)
+
+### หน้าที่ 1: หน้าแรก (Home)
 - แสดงข้อมูลภาพรวมของโครงการ
 - แสดงจำนวนโปรตีนและสารยาในฐานข้อมูล
+- แสดงผลลัพธ์เด่น (Featured Result) พร้อมค่า Binding Affinity
+- มี Micro-interactions และ Animations ด้วย Framer Motion
 
-### หน้าที่ 2: โปรตีนพิษ
-- แสดงรายการโปรตีนพิษทั้งหมด
+### หน้าที่ 2: โปรตีนพิษ (Proteins)
+- แสดงรายการโปรตีนพิษทั้งหมดแบบ Card-based
 - มีตัวกรองตามสายพันธุ์และชนิดพิษ
-- แสดงโครงสร้าง 3 มิติของโปรตีน
+- แสดงโครงสร้าง 3 มิติของโปรตีนจาก AlphaFold API
+- แสดงลำดับกรดอะมิโนแบบขยาย/ย่อได้
 
-### หน้าที่ 3: สารยา
-- แสดงรายการสารยาทั้งหมด
+### หน้าที่ 3: สารยา (Drugs)
+- แสดงรายการสารยาทั้งหมดในตาราง
 - มีช่องค้นหาและตัวกรองตามประเภท
-- แสดงโครงสร้าง 3 มิติของสาร
+- แสดงโครงสร้าง 3 มิติของสารจาก PubChem/NCI Cactus
 
-### หน้าที่ 4: จำลองการทดลอง
-- ให้ผู้ใช้เลือกโปรตีนและสารยาที่ต้องการทดสอบ
-- กดปุ่มเริ่มจำลองและรอผลลัพธ์
+### หน้าที่ 4: จำลองการทดลอง (Simulation)
+- ให้ผู้ใช้เลือกโปรตีนและสารยาที่ต้องการทดสอบ (เลือกทั้งหมดได้)
+- ปรับพารามิเตอร์ Exhaustiveness, Num Modes, Random Seed
+- แสดง Progress Bar ระหว่างจำลอง
+- แสดงผลลัพธ์ Top 5 ทันทีหลังจำลองเสร็จ
 
-### หน้าที่ 5: ผลลัพธ์
-- แสดงตารางผลลัพธ์ทั้งหมด
-- แสดงกราฟการกระจายของค่า Binding Affinity
-- แสดงแผนที่ความร้อนเปรียบเทียบผลลัพธ์
+### หน้าที่ 5: ผลลัพธ์ (Results)
+- แสดงตารางผลลัพธ์ทั้งหมดพร้อมระดับคุณภาพ
+- แสดงกราฟ Bar Chart, Scatter Plot ด้วย Recharts
+- แสดง Heatmap เปรียบเทียบผลลัพธ์
+- กรองข้อมูลตามโปรตีนและระดับคุณภาพ
 
-### หน้าที่ 6: ส่งออกข้อมูล
+### หน้าที่ 6: ส่งออกข้อมูล (Export)
 - ปุ่มดาวน์โหลดไฟล์ CSV
-- ปุ่มดาวน์โหลดไฟล์ Excel
+- สถิติสรุปผลลัพธ์ก่อนส่งออก
+
+### หน้าที่ 7: จำลองการจับกัน (Docking Visualization) — **ใหม่**
+- เลือกคู่โปรตีน-สารยาแบบ Card-based
+- แสดงโครงสร้าง 3 มิติแบบ Surface Rendering (PyMOL-style)
+- แสดง Binding Pocket (สีแดง), Drug Molecule (สีเขียว), Protein Surface (สีเทา)
+- ลูกศรอธิบาย (Annotations) ชี้ตำแหน่งสำคัญ
+- แสดงค่า Binding Affinity, H-bonds, Hydrophobic Contacts
 
 ---
 
 ## ขั้นตอนที่ 7: ทดสอบและปรับปรุง
 
-1. ทดสอบการทำงานของทุกหน้า
+1. ทดสอบการทำงานของทุกหน้าด้วย Playwright End-to-End Tests
 2. ตรวจสอบความถูกต้องของข้อมูล
 3. ทดสอบการส่งออกไฟล์
-4. แก้ไขข้อผิดพลาดที่พบ
-5. ปรับปรุงหน้าตาให้สวยงามและใช้งานง่าย
+4. ตรวจสอบ Accessibility (WCAG 2.1) ด้วย RAMS Design Review
+5. แก้ไขข้อผิดพลาดที่พบ (TypeScript type-checking)
+6. ปรับปรุงหน้าตาให้สวยงามและใช้งานง่าย
+7. เพิ่ม Micro-interactions, Kawaii Jellyfish Mascot, และ Ocean Bubbles Effect
 
 ---
 
@@ -109,3 +130,20 @@
 รวบรวมข้อมูล → สร้างฐานข้อมูล → สร้างส่วนแสดงผล 3D →
 สร้างส่วนจำลอง → ออกแบบหน้าเว็บ → ทดสอบและปรับปรุง
 ```
+
+## เทคโนโลยีที่ใช้ (Tech Stack)
+
+| เทคโนโลยี | หน้าที่ |
+|-----------|---------|
+| React 18 + TypeScript | Frontend framework |
+| Vite | Build tool |
+| Tailwind CSS | Utility-first CSS |
+| Ant Design | UI component library |
+| Framer Motion | Animations & micro-interactions |
+| 3Dmol.js | 3D molecular visualization (WebGL) |
+| Recharts | Data visualization / charts |
+| Zustand | State management |
+| Playwright | End-to-end testing |
+| Vercel | Deployment & hosting |
+| AlphaFold API | Protein 3D structures |
+| PubChem / NCI Cactus | Drug 3D structures (SDF) |

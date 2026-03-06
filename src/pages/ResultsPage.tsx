@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { Alert, AlertDescription } from '../components/ui/alert';
@@ -235,7 +236,16 @@ export const ResultsPage: React.FC = () => {
   if (!simulationResults) {
     return (
       <div className="max-w-6xl mx-auto space-y-8">
-        <h1 className="text-2xl font-semibold text-gray-900">{t('results.title')}</h1>
+        <h1 className="text-2xl font-semibold text-gray-900 flex items-center gap-2">
+          <motion.span
+            animate={{ y: [0, -4, 0] }}
+            transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+            className="inline-block"
+          >
+            {'📊'}
+          </motion.span>
+          {t('results.title')}
+        </h1>
         <Alert>
           <AlertDescription>
             {t('results.noResults')}
@@ -248,36 +258,41 @@ export const ResultsPage: React.FC = () => {
   return (
     <div className="max-w-6xl mx-auto space-y-8">
       {/* Header */}
-      <h1 className="text-2xl font-semibold text-gray-900">{t('results.title')}</h1>
+      <h1 className="text-2xl font-semibold text-gray-900 flex items-center gap-2">
+        <motion.span
+          animate={{ y: [0, -4, 0] }}
+          transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+          className="inline-block"
+        >
+          {'📊'}
+        </motion.span>
+        {t('results.title')}
+      </h1>
 
       {/* Statistics summary */}
       <div>
         <h2 className="text-lg font-semibold mb-4 text-gray-900">{t('results.statsSummary')}</h2>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card className="metric-card">
-            <CardContent className="p-6">
-              <div className="text-2xl font-bold font-mono text-gray-900">{statistics.total}</div>
-              <p className="text-sm text-gray-500">{t('results.totalSimulations')}</p>
-            </CardContent>
-          </Card>
-          <Card className="metric-card">
-            <CardContent className="p-6">
-              <div className="text-2xl font-bold font-mono text-gray-900">{statistics.successful}</div>
-              <p className="text-sm text-gray-500">{t('results.successfulBindings')}</p>
-            </CardContent>
-          </Card>
-          <Card className="metric-card">
-            <CardContent className="p-6">
-              <div className="text-2xl font-bold font-mono text-gray-900">{statistics.successRate.toFixed(1)}%</div>
-              <p className="text-sm text-gray-500">{t('results.successRate')}</p>
-            </CardContent>
-          </Card>
-          <Card className="metric-card">
-            <CardContent className="p-6">
-              <div className="text-2xl font-bold font-mono text-gray-900">{statistics.bestAffinity} kcal/mol</div>
-              <p className="text-sm text-gray-500">{t('results.bestAffinity')}</p>
-            </CardContent>
-          </Card>
+          {[
+            { value: statistics.total, label: t('results.totalSimulations'), id: 'stat-total-label' },
+            { value: statistics.successful, label: t('results.successfulBindings'), id: 'stat-successful-label' },
+            { value: `${statistics.successRate.toFixed(1)}%`, label: t('results.successRate'), id: 'stat-rate-label' },
+            { value: `${statistics.bestAffinity} kcal/mol`, label: t('results.bestAffinity'), id: 'stat-best-label' },
+          ].map((stat, index) => (
+            <motion.div
+              key={stat.id}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3, delay: index * 0.1 }}
+            >
+              <Card className="metric-card">
+                <CardContent className="p-6">
+                  <div className="text-2xl font-bold font-mono text-gray-900" aria-labelledby={stat.id}>{stat.value}</div>
+                  <p className="text-sm text-gray-500" id={stat.id}>{stat.label}</p>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
         </div>
       </div>
 
@@ -297,12 +312,12 @@ export const ResultsPage: React.FC = () => {
               <CardTitle>{t('results.allResultsTable')}</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="bio-table-wrapper overflow-x-auto max-h-96 overflow-y-auto">
+              <div className="bio-table-wrapper overflow-x-auto max-h-96 overflow-y-auto focus-visible:ring-2 focus-visible:ring-blue-500 outline-none" role="region" tabIndex={0} aria-label="Results table">
                 <table className="w-full border-collapse border border-gray-200">
                   <thead className="sticky top-0 bg-gray-100">
                     <tr>
                       {tableHeaders.map(header => (
-                        <th key={header} className="border border-gray-200 px-4 py-2 text-left text-gray-600">
+                        <th key={header} scope="col" className="border border-gray-200 px-4 py-2 text-left text-gray-600">
                           {header}
                         </th>
                       ))}
@@ -342,16 +357,23 @@ export const ResultsPage: React.FC = () => {
                   <CardTitle>{t('results.affinityDistribution')}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <BarChart data={histogramData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" />
-                      <XAxis dataKey="range" tick={{ fill: '#6b7280' }} stroke="rgba(0,0,0,0.1)" />
-                      <YAxis tick={{ fill: '#6b7280' }} stroke="rgba(0,0,0,0.1)" />
-                      <Tooltip contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #e5e7eb', color: '#111827' }} />
-                      <Bar dataKey="count" fill="#2563EB" />
-                      <ReferenceLine x="-7.0" stroke="#059669" strokeDasharray="5 5" />
-                    </BarChart>
-                  </ResponsiveContainer>
+                  <motion.figure
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.1 }}
+                  >
+                    <figcaption className="sr-only">Bar chart showing the distribution of binding affinity values across simulation results</figcaption>
+                    <ResponsiveContainer width="100%" height={300}>
+                      <BarChart data={histogramData}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" />
+                        <XAxis dataKey="range" tick={{ fill: '#6b7280' }} stroke="rgba(0,0,0,0.1)" />
+                        <YAxis tick={{ fill: '#6b7280' }} stroke="rgba(0,0,0,0.1)" />
+                        <Tooltip contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #e5e7eb', color: '#111827' }} />
+                        <Bar dataKey="count" fill="#2563EB" />
+                        <ReferenceLine x="-7.0" stroke="#059669" strokeDasharray="5 5" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </motion.figure>
                 </CardContent>
               </Card>
 
@@ -361,25 +383,32 @@ export const ResultsPage: React.FC = () => {
                   <CardTitle>{t('results.resultsByRating')}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <PieChart>
-                      <Pie
-                        data={ratingDistribution}
-                        dataKey="count"
-                        nameKey="rating"
-                        cx="50%"
-                        cy="50%"
-                        outerRadius={80}
-                        fill="#2563EB"
-                      >
-                        {ratingDistribution.map((_, index) => (
-                          <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
-                        ))}
-                      </Pie>
-                      <Tooltip contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #e5e7eb', color: '#111827' }} />
-                      <Legend wrapperStyle={{ color: '#6b7280' }} />
-                    </PieChart>
-                  </ResponsiveContainer>
+                  <motion.figure
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
+                  >
+                    <figcaption className="sr-only">Pie chart showing the distribution of simulation results by rating category</figcaption>
+                    <ResponsiveContainer width="100%" height={300}>
+                      <PieChart>
+                        <Pie
+                          data={ratingDistribution}
+                          dataKey="count"
+                          nameKey="rating"
+                          cx="50%"
+                          cy="50%"
+                          outerRadius={80}
+                          fill="#2563EB"
+                        >
+                          {ratingDistribution.map((_, index) => (
+                            <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #e5e7eb', color: '#111827' }} />
+                        <Legend wrapperStyle={{ color: '#6b7280' }} />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </motion.figure>
                 </CardContent>
               </Card>
             </div>
@@ -412,13 +441,17 @@ export const ResultsPage: React.FC = () => {
                   const isExpanded = expandedResults.has(index);
 
                   return (
-                    <Collapsible
+                    <motion.div
                       key={index}
+                      whileHover={{ y: -2 }}
+                      transition={{ type: 'spring', stiffness: 300 }}
+                    >
+                    <Collapsible
                       open={isExpanded}
                       onOpenChange={() => toggleResultExpansion(index)}
                     >
                       <CollapsibleTrigger asChild>
-                        <div className="cursor-pointer p-4 border border-gray-200 rounded-lg hover:bg-gray-50 bg-white">
+                        <div className="cursor-pointer p-4 border border-gray-200 rounded-lg hover:bg-gray-50 bg-white focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 outline-none">
                           <div className="flex justify-between items-center">
                             <span className="text-gray-900">
                               <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium border mr-2 ${badgeColor}`}>
@@ -435,7 +468,7 @@ export const ResultsPage: React.FC = () => {
                         <div className="p-4 bg-gray-50 rounded-lg mt-2">
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                              <h4 className="font-bold text-gray-900">{t('simulation.drug')}: {result.drug.name}</h4>
+                              <h3 className="font-bold text-gray-900">{t('simulation.drug')}: {result.drug.name}</h3>
                               <ul className="text-sm space-y-1 text-gray-600">
                                 <li>{t('results.formula')}: {result.drug.molecular_formula}</li>
                                 <li>{t('common.molecularWeight')}: {result.drug.molecular_weight} g/mol</li>
@@ -443,7 +476,7 @@ export const ResultsPage: React.FC = () => {
                               </ul>
                             </div>
                             <div>
-                              <h4 className="font-bold text-gray-900">{t('simulation.protein')}: {result.protein.name}</h4>
+                              <h3 className="font-bold text-gray-900">{t('simulation.protein')}: {result.protein.name}</h3>
                               <ul className="text-sm space-y-1 text-gray-600">
                                 <li>{t('common.organism')}: {result.protein.organism}</li>
                                 <li>{t('common.function')}: {result.protein.function}</li>
@@ -452,7 +485,7 @@ export const ResultsPage: React.FC = () => {
                           </div>
                           <hr className="my-4 border-gray-200" />
                           <div>
-                            <h4 className="font-bold text-gray-900">{t('results.dockingResults')}</h4>
+                            <h3 className="font-bold text-gray-900">{t('results.dockingResults')}</h3>
                             <ul className="text-sm space-y-1 text-gray-600">
                               <li>{t('results.bindingAffinity')}: <strong className="text-blue-600 font-mono">{result.binding_affinity} kcal/mol</strong></li>
                               <li>{t('results.hBonds')}: <span className="font-mono">{result.hydrogen_bonds}</span></li>
@@ -463,6 +496,7 @@ export const ResultsPage: React.FC = () => {
                         </div>
                       </CollapsibleContent>
                     </Collapsible>
+                    </motion.div>
                   );
                 })}
               </div>
@@ -486,7 +520,7 @@ export const ResultsPage: React.FC = () => {
                     <thead>
                       <tr className="bg-gray-100">
                         {proteinAnalysisHeaders.map(header => (
-                          <th key={header} className="border border-gray-200 px-4 py-2 text-left text-gray-600">
+                          <th key={header} scope="col" className="border border-gray-200 px-4 py-2 text-left text-gray-600">
                             {header}
                           </th>
                         ))}
@@ -518,7 +552,7 @@ export const ResultsPage: React.FC = () => {
                     <thead>
                       <tr className="bg-gray-100">
                         {drugAnalysisHeaders.map(header => (
-                          <th key={header} className="border border-gray-200 px-4 py-2 text-left text-gray-600">
+                          <th key={header} scope="col" className="border border-gray-200 px-4 py-2 text-left text-gray-600">
                             {header}
                           </th>
                         ))}
@@ -550,7 +584,7 @@ export const ResultsPage: React.FC = () => {
                     <thead>
                       <tr className="bg-gray-100">
                         {bestDrugHeaders.map(header => (
-                          <th key={header} className="border border-gray-200 px-4 py-2 text-left text-gray-600">
+                          <th key={header} scope="col" className="border border-gray-200 px-4 py-2 text-left text-gray-600">
                             {header}
                           </th>
                         ))}

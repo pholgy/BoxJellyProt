@@ -17,28 +17,31 @@
 
 ## 2. ซอฟต์แวร์และโปรแกรม (Software)
 
-### โปรแกรมหลัก
+### โปรแกรมหลัก (ย้ายจาก Python/Streamlit เป็น React/TypeScript)
 | โปรแกรม | เวอร์ชัน | การใช้งาน |
 |---------|---------|-----------|
-| Python | 3.8+ | ภาษาโปรแกรมหลัก |
-| Streamlit | 1.28+ | สร้างเว็บแอปพลิเคชัน |
-| AutoDock Vina | 1.2.x | จำลอง Molecular Docking |
+| Node.js | 18+ | Runtime สำหรับ JavaScript/TypeScript |
+| React | 18.x | Frontend framework |
+| TypeScript | 5.x | Type-safe JavaScript |
+| Vite | 5.x | Build tool และ Dev server |
 
-### ไลบรารี Python
+### ไลบรารีหลัก
 | ไลบรารี | การใช้งาน |
 |---------|-----------|
-| Pandas | จัดการข้อมูลตาราง |
-| NumPy | คำนวณทางคณิตศาสตร์ |
-| Plotly | สร้างกราฟและแผนภูมิ |
-| py3Dmol | แสดงผลโมเลกุล 3 มิติ |
-| Requests | เชื่อมต่อฐานข้อมูลออนไลน์ |
+| Tailwind CSS | Utility-first CSS framework |
+| Ant Design | UI component library |
+| 3Dmol.js | แสดงผลโมเลกุล 3 มิติ (WebGL) |
+| Framer Motion | Animations และ micro-interactions |
+| Recharts | สร้างกราฟและแผนภูมิ |
+| Zustand | State management |
+| Playwright | End-to-end testing |
 
 ### โปรแกรมเสริม (Optional)
 | โปรแกรม | การใช้งาน |
 |---------|-----------|
 | ChimeraX | ดูโครงสร้างโปรตีน 3 มิติ |
 | PyMOL | วิเคราะห์โครงสร้างโมเลกุล |
-| Open Babel | แปลงรูปแบบไฟล์โมเลกุล |
+| Vercel | Deploy เว็บแอปพลิเคชัน |
 
 ---
 

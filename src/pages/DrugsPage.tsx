@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
+import { motion } from 'framer-motion';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
@@ -55,7 +56,7 @@ export const DrugsPage: React.FC = () => {
   if (isLoading) {
     return (
       <div className="max-w-6xl mx-auto">
-        <div className="text-center">
+        <div className="text-center" role="status" aria-live="polite">
           <p className="text-lg text-gray-600">{t('common.loading')}</p>
         </div>
       </div>
@@ -65,7 +66,16 @@ export const DrugsPage: React.FC = () => {
   return (
     <div className="max-w-6xl mx-auto space-y-8">
       {/* Header */}
-      <h1 className="text-2xl font-semibold text-gray-900">{t('drugs.title')}</h1>
+      <h1 className="text-2xl font-semibold text-gray-900">
+        <motion.span
+          animate={{ y: [0, -3, 0] }}
+          transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+          style={{ display: 'inline-block' }}
+        >
+          💊
+        </motion.span>{' '}
+        {t('drugs.title')}
+      </h1>
 
       {/* Filters */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -90,10 +100,12 @@ export const DrugsPage: React.FC = () => {
           <Label htmlFor="search-input" className="text-gray-600">{t('drugs.searchName')}</Label>
           <Input
             id="search-input"
-            type="text"
-            placeholder={t('drugs.searchPlaceholder')}
+            type="search"
+            autoComplete="off"
+            placeholder={`🔍 ${t('drugs.searchPlaceholder')}`}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+            className="focus:ring-2 focus:ring-blue-300 transition-shadow duration-200"
           />
         </div>
       </div>
@@ -101,19 +113,19 @@ export const DrugsPage: React.FC = () => {
       {/* Drug data table */}
       <div>
         <div className="overflow-x-auto glass-panel rounded-xl">
-          <table className="w-full border-collapse">
+          <table className="w-full border-collapse" aria-label="Drug compounds list">
             <thead>
               <tr className="bg-gray-50/80">
-                <th className="border-b border-gray-200 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('common.name')}</th>
-                <th className="border-b border-gray-200 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('common.molecularFormula')}</th>
-                <th className="border-b border-gray-200 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('common.molecularWeight')} (g/mol)</th>
-                <th className="border-b border-gray-200 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('common.category')}</th>
-                <th className="border-b border-gray-200 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('common.source')}</th>
+                <th scope="col" className="border-b border-gray-200 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('common.name')}</th>
+                <th scope="col" className="border-b border-gray-200 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('common.molecularFormula')}</th>
+                <th scope="col" className="border-b border-gray-200 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('common.molecularWeight')} (g/mol)</th>
+                <th scope="col" className="border-b border-gray-200 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('common.category')}</th>
+                <th scope="col" className="border-b border-gray-200 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('common.source')}</th>
               </tr>
             </thead>
             <tbody>
               {filteredDrugs.map((drug) => (
-                <tr key={drug.cid} className="border-b border-gray-100 hover:bg-gray-50/50 transition-colors">
+                <tr key={drug.cid} className="border-b border-gray-100 hover:bg-gray-50/50 hover:scale-[1.005] transition-transform duration-150 transition-colors">
                   <td className="px-4 py-3 text-sm text-gray-700 font-medium">{drug.name}</td>
                   <td className="px-4 py-3 font-mono text-sm text-gray-600">{drug.molecular_formula}</td>
                   <td className="px-4 py-3 font-mono text-sm text-gray-600">{drug.molecular_weight}</td>
@@ -126,15 +138,27 @@ export const DrugsPage: React.FC = () => {
         </div>
 
         {filteredDrugs.length === 0 && (
-          <div className="text-center py-8">
-            <p className="text-gray-400 text-lg">{t('drugs.noDrugs')}</p>
+          <div className="text-center py-8" role="status" aria-live="polite">
+            <motion.span
+              animate={{ rotate: [0, -10, 10, -10, 0] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              style={{ display: 'inline-block', fontSize: '2rem' }}
+            >
+              🤷
+            </motion.span>
+            <p className="text-gray-500 text-lg mt-2">{t('drugs.noDrugs')}</p>
           </div>
         )}
       </div>
 
       {/* Drug detail section */}
       {filteredDrugs.length > 0 && (
-        <div className="glass-panel rounded-xl">
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.3 }}
+          className="glass-panel rounded-xl"
+        >
           <div className="px-6 py-4 border-b border-gray-200">
             <h2 className="text-lg font-semibold text-gray-900">{t('drugs.drugDetails')}</h2>
           </div>
@@ -178,7 +202,7 @@ export const DrugsPage: React.FC = () => {
                     {selectedDrug.smiles && (
                       <div>
                         <p className="font-bold mb-2 text-gray-900">SMILES:</p>
-                        <div className="bg-gray-50 p-3 rounded-md border border-gray-200">
+                        <div className="bg-gray-50 p-3 rounded-md border border-gray-200" aria-label="SMILES code">
                           <code className="text-sm font-mono break-all text-blue-600">
                             {selectedDrug.smiles}
                           </code>
@@ -190,8 +214,12 @@ export const DrugsPage: React.FC = () => {
                   {/* Right column - 3D molecular structure */}
                   <div className="space-y-4">
                     {selectedDrug.smiles && (
-                      <div>
-                        <h4 className="font-bold mb-3 text-gray-900">{t('drugs.structure3d')}</h4>
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.98 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.2, duration: 0.4 }}
+                      >
+                        <h3 className="font-bold mb-3 text-gray-900">{t('drugs.structure3d')}</h3>
                         <div className="relative border border-gray-200 rounded-xl overflow-hidden">
                           <MoleculeViewer
                             cid={selectedDrug.cid}
@@ -199,14 +227,14 @@ export const DrugsPage: React.FC = () => {
                             drugName={selectedDrug.name}
                           />
                         </div>
-                      </div>
+                      </motion.div>
                     )}
                   </div>
                 </div>
               )}
             </div>
           </div>
-        </div>
+        </motion.div>
       )}
     </div>
   );
